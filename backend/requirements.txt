@@ -4,3 +4,4 @@ Flask-CORS
 Flask-JWT-Extended
 qrcode
 Pillow
+pytest

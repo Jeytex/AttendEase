@@ -1,38 +1,40 @@
+import secrets
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from database import db
-from models import User
+from models import User, Student, FacultyProfile, FaceProfile, now_utc
 
 auth = Blueprint("auth", __name__)
 
 
 @auth.route("/register", methods=["POST"])
 def register():
-    data = request.get_json()
+    data = request.get_json() or {}
 
-    name = data.get("name")
-    email = data.get("email")
-    password = data.get("password")
-    role = data.get("role")
+    name = data.get("name", "").strip()
+    email = data.get("email", "").strip().lower()
+    password = data.get("password", "")
+    confirm_password = data.get("confirm_password", "")
+    role = data.get("role", "").strip().lower()
 
     if not name or not email or not password or not role:
-        return jsonify({
-            "error": "All fields are required"
-        }), 400
+        return jsonify({"error": "Name, email, password, and role are required"}), 400
 
     if role not in ["student", "faculty"]:
-        return jsonify({
-            "error": "Role must be student or faculty"
-        }), 400
+        return jsonify({"error": "Role must be 'student' or 'faculty'"}), 400
 
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters long"}), 400
+
+    if confirm_password and password != confirm_password:
+        return jsonify({"error": "Passwords do not match"}), 400
+
+    # Ensure unique email
     existing_user = User.query.filter_by(email=email).first()
-
     if existing_user:
-        return jsonify({
-            "error": "User already exists"
-        }), 409
+        return jsonify({"error": "An account with this email already exists"}), 409
 
     hashed_password = generate_password_hash(password)
 
@@ -40,47 +42,188 @@ def register():
         name=name,
         email=email,
         password=hashed_password,
-        role=role
+        role=role,
+        created_at=now_utc()
     )
-
     db.session.add(user)
+    db.session.flush()
+
+    roll_number = None
+    faculty_id_code = None
+    status = "active"
+    requires_face_registration = False
+
+    if role == "student":
+        # Handle student profile
+        raw_roll = data.get("roll_number", "").strip().upper()
+        if raw_roll:
+            existing_roll = Student.query.filter_by(roll_number=raw_roll).first()
+            if existing_roll:
+                db.session.rollback()
+                return jsonify({"error": f"Roll number '{raw_roll}' is already in use"}), 409
+            roll_number = raw_roll
+        else:
+            # Auto-generate unique student ID / roll number
+            roll_number = f"STU{user.id:04d}"
+            while Student.query.filter_by(roll_number=roll_number).first():
+                roll_number = f"STU{user.id:04d}-{secrets.token_hex(2).upper()}"
+
+        status = "face_registration_pending"
+        requires_face_registration = True
+
+        student = Student(
+            user_id=user.id,
+            roll_number=roll_number,
+            status=status,
+            zepiris_identity_id=None,
+            created_at=now_utc()
+        )
+        db.session.add(student)
+
+    elif role == "faculty":
+        # Handle faculty profile
+        raw_fac_id = data.get("faculty_id", "").strip().upper()
+        department = data.get("department", "").strip() or None
+
+        if raw_fac_id:
+            existing_fac = FacultyProfile.query.filter_by(faculty_id_code=raw_fac_id).first()
+            if existing_fac:
+                db.session.rollback()
+                return jsonify({"error": f"Faculty ID '{raw_fac_id}' is already in use"}), 409
+            faculty_id_code = raw_fac_id
+        else:
+            faculty_id_code = f"FAC{user.id:04d}"
+            while FacultyProfile.query.filter_by(faculty_id_code=faculty_id_code).first():
+                faculty_id_code = f"FAC{user.id:04d}-{secrets.token_hex(2).upper()}"
+
+        faculty_prof = FacultyProfile(
+            user_id=user.id,
+            faculty_id_code=faculty_id_code,
+            department=department,
+            created_at=now_utc()
+        )
+        db.session.add(faculty_prof)
+
     db.session.commit()
 
+    # Issue JWT access token
+    access_token = create_access_token(
+        identity=str(user.id),
+        additional_claims={
+            "role": user.role,
+            "name": user.name,
+            "email": user.email,
+        }
+    )
+
     return jsonify({
-        "message": "Registration successful"
+        "message": "Account created successfully",
+        "access_token": access_token,
+        "user_id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "role": user.role,
+        "status": status,
+        "requires_face_registration": requires_face_registration,
+        "roll_number": roll_number,
+        "faculty_id": faculty_id_code,
     }), 201
 
 
 @auth.route("/login", methods=["POST"])
 def login():
-    data = request.get_json()
+    data = request.get_json() or {}
 
-    email = data.get("email")
-    password = data.get("password")
+    email = data.get("email", "").strip().lower()
+    password = data.get("password", "")
 
     if not email or not password:
-        return jsonify({
-            "error": "Email and password are required"
-        }), 400
+        return jsonify({"error": "Email and password are required"}), 400
 
     user = User.query.filter_by(email=email).first()
 
     if not user or not check_password_hash(user.password, password):
-        return jsonify({
-            "error": "Invalid email or password"
-        }), 401
+        return jsonify({"error": "Invalid email or password"}), 401
 
     access_token = create_access_token(
         identity=str(user.id),
         additional_claims={
-            "role": user.role
+            "role": user.role,
+            "name": user.name,
+            "email": user.email,
         }
     )
+
+    roll_number = None
+    faculty_id_code = None
+    status = "active"
+    requires_face_registration = False
+
+    if user.role == "student":
+        stu = Student.query.filter_by(user_id=user.id).first()
+        if stu:
+            roll_number = stu.roll_number
+            status = stu.status
+            has_profile = bool(stu.face_profile is not None)
+            if status != "active" or not has_profile:
+                status = "face_registration_pending"
+                requires_face_registration = True
+        else:
+            status = "face_registration_pending"
+            requires_face_registration = True
+    elif user.role == "faculty":
+        fac_prof = FacultyProfile.query.filter_by(user_id=user.id).first()
+        faculty_id_code = fac_prof.faculty_id_code if fac_prof else f"FAC{user.id:04d}"
+        status = "active"
+        requires_face_registration = False
 
     return jsonify({
         "message": "Login successful",
         "access_token": access_token,
-        "role": user.role,
         "user_id": user.id,
-        "name": user.name
+        "name": user.name,
+        "email": user.email,
+        "role": user.role,
+        "status": status,
+        "requires_face_registration": requires_face_registration,
+        "roll_number": roll_number,
+        "faculty_id": faculty_id_code,
+    }), 200
+
+
+@auth.route("/me", methods=["GET"])
+@jwt_required()
+def get_current_user():
+    user_id = int(get_jwt_identity())
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    roll_number = None
+    faculty_id_code = None
+    status = "active"
+    requires_face_registration = False
+    face_registered = False
+
+    if user.role == "student":
+        stu = Student.query.filter_by(user_id=user.id).first()
+        if stu:
+            roll_number = stu.roll_number
+            status = stu.status
+            face_registered = bool(stu.face_profile is not None and stu.status == "active")
+            requires_face_registration = not face_registered
+    elif user.role == "faculty":
+        fac = FacultyProfile.query.filter_by(user_id=user.id).first()
+        faculty_id_code = fac.faculty_id_code if fac else None
+
+    return jsonify({
+        "user_id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "role": user.role,
+        "status": status,
+        "face_registered": face_registered,
+        "requires_face_registration": requires_face_registration,
+        "roll_number": roll_number,
+        "faculty_id": faculty_id_code,
     }), 200

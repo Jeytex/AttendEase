@@ -1,0 +1,87 @@
+# ============================================================
+# AttendEase - Root .gitignore
+# ============================================================
+
+# --- Databases & Local State ---
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+database/database.db
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+instance/
+backend/instance/
+
+# --- Environment Variables & Secrets ---
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+
+# --- Python Artifacts & Caches ---
+__pycache__/
+backend/__pycache__/
+zepiris-main/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+env/
+venv/
+ENV/
+
+# --- Node / Frontend Build Outputs ---
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# --- Zepiris ML Model Weights & Large Binaries (>10MB-50MB) ---
+zepiris-main/models/*.pth
+zepiris-main/models/*.onnx
+zepiris-main/models/*.bin
+zepiris-main/models/*.weights
+models/*.pth
+models/*.onnx
+models/*.bin
+models/*.weights
+*.pth
+*.onnx
+*.weights
+*.bin
+*.h5
+*.tflite
+.insightface/
+
+# --- Operating System & IDE Files ---
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*~

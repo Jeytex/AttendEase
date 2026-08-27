@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZepIris — Live Camera Face Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-card: #131b2e;
+            --border-color: #232f48;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            max-width: 1050px;
+            width: 100%;
+        }
+
+        @media (max-width: 860px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Camera Box */
+        .camera-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background-color: #050811;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Mirror view */
+        }
+
+        .face-guide {
+            position: absolute;
+            width: 220px;
+            height: 280px;
+            border: 2px dashed rgba(99, 102, 241, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .face-guide.matched {
+            border-color: var(--success);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5), 0 0 0 9999px rgba(0, 0, 0, 0.25);
+        }
+
+        .face-guide.denied {
+            border-color: var(--danger);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5), 0 0 0 9999px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 18px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            flex: 1 1 200px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: #0b1120;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+
+        .btn-danger {
+            background-color: #334155;
+            color: #f1f5f9;
+        }
+        .btn-danger:hover {
+            background-color: var(--danger);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Results Panel */
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-idle { background: #1e293b; color: #94a3b8; }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        .result-box {
+            padding: 16px;
+            border-radius: 10px;
+            background: #0b1120;
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .result-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .result-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Quality Metric Bars */
+        .metric-row {
+            margin-bottom: 12px;
+        }
+        .metric-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .progress-bar {
+            height: 6px;
+            background-color: #1e293b;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent);
+            transition: width 0.4s ease;
+        }
+
+        .enrolled-list {
+            list-style: none;
+            margin-top: 10px;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+
+        .enrolled-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #0b1120;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>👁️ ZepIris Face Authentication</h1>
+        <p>Live Camera Enrollment, Liveness/Anti-Spoofing & Instant 1-to-N Recognition</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Left: Camera Section -->
+        <div class="card">
+            <div class="camera-wrapper">
+                <video id="webcam" autoplay playsinline muted></video>
+                <div class="face-guide" id="faceGuide"></div>
+            </div>
+
+            <div class="controls">
+                <div class="input-group">
+                    <input type="text" id="userName" placeholder="Enter name (e.g. Sidharth)" value="Sidharth" />
+                </div>
+                <button class="btn btn-primary" id="btnEnroll" onclick="enrollFace()">
+                    <span>➕ Enroll Face</span>
+                </button>
+                <button class="btn btn-success" id="btnAuth" onclick="authenticateFace()">
+                    <span>🔓 Authenticate</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right: Assessment & Matching Section -->
+        <div class="card">
+            <div class="panel-title">
+                <span>Verification Results</span>
+                <span class="status-badge badge-idle" id="statusBadge">Ready</span>
+            </div>
+
+            <div class="result-box" id="resultBox">
+                <div class="result-title" id="resultTitle">Look at the camera</div>
+                <div class="result-desc" id="resultDesc">Click <b>"Enroll Face"</b> to register your face, or <b>"Authenticate"</b> to test recognition.</div>
+            </div>
+
+            <!-- Metrics -->
+            <div style="margin-top: 14px;">
+                <div class="metric-row">
+                    <div class="metric-label">
+                        <span>Match Similarity (Cosine)</span>
+                        <span id="valMatch">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="barMatch" style="background-color: #6366f1;"></div>
+                    </div>
+                </div>
+
+                <div class="metric-row">
+                    <div class="metric-label">
+                        <span>Liveness / Anti-Spoof</span>
+                        <span id="valLiveness">--%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="barLiveness" style="background-color: #10b981;"></div>
+                    </div>
+                </div>
+
+                <div class="metric-row">
+                    <div class="metric-label">
+                        <span>Image Sharpness</span>
+                        <span id="valSharpness">--%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="barSharpness" style="background-color: #38bdf8;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 18px 0 12px;">
+
+            <!-- Enrolled Faces -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">Enrolled Profiles</span>
+                <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="clearFaces()">Clear All</button>
+            </div>
+            <ul class="enrolled-list" id="enrolledList">
+                <li style="color: var(--text-secondary); font-size: 12px; font-style: italic;">No profiles enrolled yet.</li>
+            </ul>
+        </div>
+    </div>
+
+    <canvas id="snapshotCanvas" style="display: none;"></canvas>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('snapshotCanvas');
+        const faceGuide = document.getElementById('faceGuide');
+        const statusBadge = document.getElementById('statusBadge');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultDesc = document.getElementById('resultDesc');
+        const btnEnroll = document.getElementById('btnEnroll');
+        const btnAuth = document.getElementById('btnAuth');
+        const enrolledList = document.getElementById('enrolledList');
+
+        // Start Webcam
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Camera access error:", err);
+                resultTitle.innerText = "Camera Access Error";
+                resultDesc.innerText = "Please allow webcam permission in your browser to test face authentication.";
+                statusBadge.innerText = "No Camera";
+                statusBadge.className = "status-badge badge-danger";
+            }
+        }
+        initCamera();
+
+        function captureFrameBase64() {
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL('image/jpeg', 0.95);
+        }
+
+        function updateMetrics(quality, matchPct = null) {
+            if (quality) {
+                if (quality.liveness_pct !== undefined) {
+                    document.getElementById('valLiveness').innerText = quality.liveness_pct + '%';
+                    document.getElementById('barLiveness').style.width = quality.liveness_pct + '%';
+                }
+                if (quality.sharpness_pct !== undefined) {
+                    document.getElementById('valSharpness').innerText = quality.sharpness_pct + '%';
+                    document.getElementById('barSharpness').style.width = quality.sharpness_pct + '%';
+                }
+            }
+            if (matchPct !== null) {
+                document.getElementById('valMatch').innerText = matchPct + '%';
+                document.getElementById('barMatch').style.width = Math.min(100, Math.max(0, matchPct)) + '%';
+            }
+        }
+
+        async function fetchEnrolled() {
+            try {
+                const res = await fetch('/api/enrolled');
+                const data = await res.json();
+                if (data.enrolled && data.enrolled.length > 0) {
+                    enrolledList.innerHTML = data.enrolled.map(name => `
+                        <li class="enrolled-item">
+                            <span>👤 <b>${name}</b></span>
+                            <span style="color: #10b981; font-size: 11px;">Enrolled</span>
+                        </li>
+                    `).join('');
+                } else {
+                    enrolledList.innerHTML = '<li style="color: var(--text-secondary); font-size: 12px; font-style: italic;">No profiles enrolled yet.</li>';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        fetchEnrolled();
+
+        async function enrollFace() {
+            const userName = document.getElementById('userName').value.trim() || 'User';
+            const base64Img = captureFrameBase64();
+
+            btnEnroll.disabled = true;
+            btnEnroll.innerHTML = '<div class="spinner"></div> Enrolling...';
+            statusBadge.innerText = 'Processing...';
+            statusBadge.className = 'status-badge badge-idle';
+
+            try {
+                const res = await fetch('/api/enroll', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image_base64: base64Img, user_name: userName })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    statusBadge.innerText = 'Enrolled ✅';
+                    statusBadge.className = 'status-badge badge-success';
+                    resultTitle.innerText = 'Enrollment Successful!';
+                    resultDesc.innerText = data.message;
+                    faceGuide.className = 'face-guide matched';
+                    updateMetrics(data.quality, 100);
+                    fetchEnrolled();
+                } else {
+                    statusBadge.innerText = 'Failed ❌';
+                    statusBadge.className = 'status-badge badge-danger';
+                    resultTitle.innerText = 'Enrollment Failed';
+                    resultDesc.innerText = data.message;
+                    faceGuide.className = 'face-guide denied';
+                    updateMetrics(data.quality);
+                }
+            } catch (err) {
+                resultTitle.innerText = 'Error';
+                resultDesc.innerText = err.toString();
+            } finally {
+                btnEnroll.disabled = false;
+                btnEnroll.innerHTML = '<span>➕ Enroll Face</span>';
+                setTimeout(() => { faceGuide.className = 'face-guide'; }, 2000);
+            }
+        }
+
+        async function authenticateFace() {
+            const base64Img = captureFrameBase64();
+
+            btnAuth.disabled = true;
+            btnAuth.innerHTML = '<div class="spinner"></div> Scanning...';
+            statusBadge.innerText = 'Verifying...';
+            statusBadge.className = 'status-badge badge-idle';
+
+            try {
+                const res = await fetch('/api/authenticate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image_base64: base64Img })
+                });
+                const data = await res.json();
+
+                updateMetrics(data.quality, data.similarity);
+
+                if (data.authenticated) {
+                    statusBadge.innerText = 'Verified ✅';
+                    statusBadge.className = 'status-badge badge-success';
+                    resultTitle.innerText = `Welcome, ${data.matched_user}!`;
+                    resultDesc.innerText = data.message;
+                    faceGuide.className = 'face-guide matched';
+                } else {
+                    statusBadge.innerText = 'Denied ❌';
+                    statusBadge.className = 'status-badge badge-danger';
+                    resultTitle.innerText = 'Authentication Failed';
+                    resultDesc.innerText = data.message;
+                    faceGuide.className = 'face-guide denied';
+                }
+            } catch (err) {
+                resultTitle.innerText = 'Error';
+                resultDesc.innerText = err.toString();
+            } finally {
+                btnAuth.disabled = false;
+                btnAuth.innerHTML = '<span>🔓 Authenticate</span>';
+                setTimeout(() => { faceGuide.className = 'face-guide'; }, 2500);
+            }
+        }
+
+        async function clearFaces() {
+            await fetch('/api/clear', { method: 'POST' });
+            fetchEnrolled();
+            updateMetrics(null, 0);
+            resultTitle.innerText = 'Database Reset';
+            resultDesc.innerText = 'All enrolled faces cleared. Enroll a face to start again.';
+            statusBadge.innerText = 'Cleared';
+            statusBadge.className = 'status-badge badge-idle';
+        }
+    </script>
+</body>
+</html>
