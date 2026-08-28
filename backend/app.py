@@ -56,6 +56,8 @@ def create_app():
                 cursor.execute("ALTER TABLE class_session ADD COLUMN created_at DATETIME;")
             if "ended_at" not in session_cols:
                 cursor.execute("ALTER TABLE class_session ADD COLUMN ended_at DATETIME;")
+            if "qr_lifetime_seconds" not in session_cols:
+                cursor.execute("ALTER TABLE class_session ADD COLUMN qr_lifetime_seconds INTEGER DEFAULT 5 NOT NULL;")
 
             # 2. student columns
             cursor.execute("PRAGMA table_info(student);")
@@ -72,6 +74,21 @@ def create_app():
             user_cols = [col[1] for col in cursor.fetchall()]
             if "created_at" not in user_cols:
                 cursor.execute("ALTER TABLE user ADD COLUMN created_at DATETIME;")
+
+            # 4. attendance audit columns
+            cursor.execute("PRAGMA table_info(attendance);")
+            att_cols = [col[1] for col in cursor.fetchall()]
+            if "method" not in att_cols:
+                cursor.execute("ALTER TABLE attendance ADD COLUMN method VARCHAR(20) DEFAULT 'QR_FACE' NOT NULL;")
+            if "verified_by_faculty_id" not in att_cols:
+                cursor.execute("ALTER TABLE attendance ADD COLUMN verified_by_faculty_id INTEGER REFERENCES user(id);")
+            if "reason" not in att_cols:
+                cursor.execute("ALTER TABLE attendance ADD COLUMN reason VARCHAR(255);")
+            if "confidence_score" not in att_cols:
+                cursor.execute("ALTER TABLE attendance ADD COLUMN confidence_score FLOAT;")
+
+            # 5. enforce unique index for concurrent duplicate prevention
+            cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS ix_uq_attendance_student_session ON attendance (student_id, class_session_id);")
 
             conn.commit()
             conn.close()

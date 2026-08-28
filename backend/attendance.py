@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
 from database import db
 from models import Subject, ClassSession, Attendance, Student, TimetableSlot, FaceProfile, now_utc
+from sqlalchemy.exc import IntegrityError
 from zepiris_service import zepiris_service
 
 attendance = Blueprint("attendance", __name__)
@@ -148,15 +149,25 @@ def create_session():
             "session_id": existing_session.id
         }), 409
 
+    # Configurable QR lifetime (default 5s, supports 3, 5, 10, 15)
+    qr_lifetime = data.get("qr_lifetime_seconds") or data.get("qr_interval") or 5
+    try:
+        qr_lifetime = int(qr_lifetime)
+        if qr_lifetime not in [3, 5, 10, 15]:
+            qr_lifetime = 5
+    except (ValueError, TypeError):
+        qr_lifetime = 5
+
     token = secrets.token_urlsafe(24)
-    expires_at = now_utc() + timedelta(seconds=15)
     current_time = now_utc()
+    expires_at = current_time + timedelta(seconds=qr_lifetime)
 
     session = ClassSession(
         subject_id=subject.id,
         faculty_id=faculty_id,
         qr_token=token,
         qr_expires_at=expires_at,
+        qr_lifetime_seconds=qr_lifetime,
         active=True,
         created_at=current_time,
         ended_at=None
@@ -173,6 +184,7 @@ def create_session():
             "subject": subject.name,
             "subject_code": subject.code,
             "active": session.active,
+            "qr_lifetime_seconds": session.qr_lifetime_seconds,
             "created_at": current_time.isoformat()
         }
     }), 201
@@ -212,6 +224,93 @@ def end_session(session_id):
 
 
 # ============================================================
+# MANUAL ATTENDANCE OVERRIDE (FACULTY ONLY)
+# ============================================================
+
+@attendance.route("/sessions/<int:session_id>/manual-mark", methods=["POST"])
+@jwt_required()
+def manual_mark_attendance(session_id):
+    if not faculty_only():
+        return jsonify({"error": "Faculty access required"}), 403
+
+    faculty_id = int(get_jwt_identity())
+    session = db.session.get(ClassSession, session_id)
+
+    if not session:
+        return jsonify({"error": "Attendance session not found"}), 404
+
+    if session.faculty_id != faculty_id:
+        return jsonify({"error": "You do not own this session"}), 403
+
+    if not session.active:
+        return jsonify({"error": "Cannot manually mark attendance for an ended session"}), 400
+
+    data = request.get_json() or {}
+    student_id = data.get("student_id")
+    roll_number = data.get("roll_number")
+    reason = str(data.get("reason", "")).strip() or "Faculty manual override"
+
+    student = None
+    if student_id:
+        try:
+            student = db.session.get(Student, int(student_id))
+        except (ValueError, TypeError):
+            pass
+    elif roll_number:
+        student = Student.query.filter_by(roll_number=str(roll_number).strip()).first()
+
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    if student.status != "active":
+        return jsonify({"error": "Student account is not active"}), 400
+
+    existing_attendance = Attendance.query.filter_by(
+        student_id=student.id,
+        class_session_id=session.id
+    ).first()
+
+    if existing_attendance:
+        return jsonify({"error": "Attendance already marked for this student in this session"}), 409
+
+    current_time = now_utc()
+    record = Attendance(
+        student_id=student.id,
+        class_session_id=session.id,
+        timestamp=current_time,
+        method="MANUAL",
+        verified_by_faculty_id=faculty_id,
+        reason=reason,
+        confidence_score=None
+    )
+    db.session.add(record)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Attendance already marked for this student in this session"}), 409
+
+    return jsonify({
+        "message": f"Attendance manually marked for {student.user.name} ({student.roll_number})",
+        "attendance": {
+            "id": record.id,
+            "student_id": student.id,
+            "student_name": student.user.name,
+            "roll_number": student.roll_number,
+            "session_id": session.id,
+            "subject": session.subject.name,
+            "subject_code": session.subject.code,
+            "timestamp": current_time.isoformat(),
+            "time": current_time.strftime("%I:%M %p"),
+            "date": current_time.strftime("%b %d, %Y"),
+            "status": "Present",
+            "method": "MANUAL",
+            "reason": reason
+        }
+    }), 201
+
+
+# ============================================================
 # GET ATTENDANCE RECORDS FOR A SINGLE SESSION
 # ============================================================
 
@@ -245,6 +344,7 @@ def get_session_records(session_id):
             "subject": session.subject.name,
             "subject_code": session.subject.code,
             "active": session.active,
+            "qr_lifetime_seconds": session.qr_lifetime_seconds if getattr(session, "qr_lifetime_seconds", None) else 5,
             "created_at": created_str,
             "ended_at": ended_str
         },
@@ -256,6 +356,9 @@ def get_session_records(session_id):
                 "name": record.student.user.name,
                 "roll_number": record.student.roll_number,
                 "status": "present",
+                "method": record.method if getattr(record, "method", None) else "QR_FACE",
+                "reason": record.reason if getattr(record, "reason", None) else None,
+                "confidence_score": record.confidence_score if getattr(record, "confidence_score", None) else None,
                 "timestamp": record.timestamp.isoformat(),
                 "time": record.timestamp.strftime("%I:%M %p")
             }
@@ -295,6 +398,7 @@ def get_faculty_sessions_history():
             "subject": s.subject.name if s.subject else "Unknown Subject",
             "subject_code": s.subject.code if s.subject else "N/A",
             "active": s.active,
+            "qr_lifetime_seconds": s.qr_lifetime_seconds if getattr(s, "qr_lifetime_seconds", None) else 5,
             "date": date_str,
             "started": start_str,
             "ended": end_str,
@@ -308,6 +412,9 @@ def get_faculty_sessions_history():
                     "student_name": r.student.user.name,
                     "roll_number": r.student.roll_number,
                     "status": "Present",
+                    "method": r.method if getattr(r, "method", None) else "QR_FACE",
+                    "reason": r.reason if getattr(r, "reason", None) else None,
+                    "confidence_score": r.confidence_score if getattr(r, "confidence_score", None) else None,
                     "timestamp": r.timestamp.isoformat(),
                     "time": r.timestamp.strftime("%I:%M %p")
                 }
@@ -386,18 +493,18 @@ def mark_attendance():
     if not session.active:
         return jsonify({"error": "Attendance session has ended"}), 400
 
-    # 3. Check QR expiration
+    # 3. Check QR expiration strictly on SERVER TIME
     current_time = now_utc()
     if (
         not session.qr_token
         or not session.qr_expires_at
         or current_time >= session.qr_expires_at
     ):
-        return jsonify({"error": "QR code has expired"}), 400
+        return jsonify({"error": "QR code has expired. Please scan the current QR code."}), 400
 
     # 4. Compare submitted token with current active session token
     if str(token).strip() != str(session.qr_token).strip():
-        return jsonify({"error": "Invalid QR token"}), 400
+        return jsonify({"error": "Invalid QR token for this session"}), 400
 
     # 5. Prevent duplicate attendance for the same session
     existing_attendance = Attendance.query.filter_by(
@@ -453,11 +560,19 @@ def mark_attendance():
     attendance_record = Attendance(
         student_id=student.id,
         class_session_id=session.id,
-        timestamp=current_time
+        timestamp=current_time,
+        method="QR_FACE",
+        verified_by_faculty_id=None,
+        reason=None,
+        confidence_score=round(similarity * 100, 2)
     )
 
     db.session.add(attendance_record)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Attendance already marked"}), 409
 
     return jsonify({
         "message": "Attendance marked successfully! Identity verified by Zepiris.",
@@ -473,6 +588,7 @@ def mark_attendance():
             "time": current_time.strftime("%I:%M %p"),
             "date": current_time.strftime("%b %d, %Y"),
             "status": "Present",
+            "method": "QR_FACE",
             "verification": {
                 "matched": True,
                 "similarity": round(similarity * 100, 2),
@@ -517,6 +633,9 @@ def get_student_history():
                 "subject": r.class_session.subject.name if r.class_session and r.class_session.subject else "Class Session",
                 "subject_code": r.class_session.subject.code if r.class_session and r.class_session.subject else "N/A",
                 "status": "Present",
+                "method": r.method if getattr(r, "method", None) else "QR_FACE",
+                "reason": r.reason if getattr(r, "reason", None) else None,
+                "confidence_score": r.confidence_score if getattr(r, "confidence_score", None) else None,
                 "timestamp": r.timestamp.isoformat(),
                 "date": r.timestamp.strftime("%b %d, %Y"),
                 "time": r.timestamp.strftime("%I:%M %p")

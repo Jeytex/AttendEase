@@ -81,6 +81,7 @@ class ClassSession(db.Model):
     faculty_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     qr_token = db.Column(db.String(255), nullable=True)
     qr_expires_at = db.Column(db.DateTime, nullable=True)
+    qr_lifetime_seconds = db.Column(db.Integer, default=5, nullable=False)
     active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, nullable=True)
     ended_at = db.Column(db.DateTime, nullable=True)
@@ -90,6 +91,10 @@ class ClassSession(db.Model):
 
 
 class Attendance(db.Model):
+    __table_args__ = (
+        db.UniqueConstraint("student_id", "class_session_id", name="uq_student_class_session"),
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
     class_session_id = db.Column(
@@ -98,9 +103,14 @@ class Attendance(db.Model):
         nullable=False
     )
     timestamp = db.Column(db.DateTime, nullable=False)
+    method = db.Column(db.String(20), default="QR_FACE", nullable=False)  # QR_FACE | MANUAL
+    verified_by_faculty_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    reason = db.Column(db.String(255), nullable=True)
+    confidence_score = db.Column(db.Float, nullable=True)
 
     student = db.relationship("Student")
     class_session = db.relationship("ClassSession")
+    verifier = db.relationship("User", foreign_keys=[verified_by_faculty_id])
 
 
 class TimetableSlot(db.Model):

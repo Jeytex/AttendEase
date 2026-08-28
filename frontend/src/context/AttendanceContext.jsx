@@ -331,7 +331,7 @@ export function AttendanceProvider({ children }) {
   // FACULTY: START SESSION
   // ============================================================
 
-  const startFacultySession = async (subjectId) => {
+  const startFacultySession = async (subjectId, qrLifetimeSeconds = 5) => {
     if (!user) {
       throw new Error('Not authenticated');
     }
@@ -341,6 +341,7 @@ export function AttendanceProvider({ children }) {
       headers: getAuthHeaders(user.access_token),
       body: JSON.stringify({
         subject_id: subjectId,
+        qr_lifetime_seconds: qrLifetimeSeconds,
       }),
     });
 
@@ -353,6 +354,7 @@ export function AttendanceProvider({ children }) {
           subject: 'Active Session',
           subject_code: 'ACTIVE',
           active: true,
+          qr_lifetime_seconds: qrLifetimeSeconds,
           isLive: true,
         });
 
@@ -372,6 +374,30 @@ export function AttendanceProvider({ children }) {
     setEndedSession(null);
     setLiveStudents([]);
     navigate('/faculty/monitor');
+
+    return data;
+  };
+
+  const manualMarkAttendance = async (sessionId, { studentId, rollNumber, reason }) => {
+    if (!user) {
+      throw new Error('Not authenticated');
+    }
+
+    const res = await fetch(`${API_URL}/api/attendance/sessions/${sessionId}/manual-mark`, {
+      method: 'POST',
+      headers: getAuthHeaders(user.access_token),
+      body: JSON.stringify({
+        student_id: studentId,
+        roll_number: rollNumber,
+        reason: reason || 'Faculty manual override',
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to manually mark attendance');
+    }
 
     return data;
   };
@@ -549,6 +575,7 @@ export function AttendanceProvider({ children }) {
         fetchFacultyHistory,
         startFacultySession,
         endFacultySession,
+        manualMarkAttendance,
 
         // Student
         scannedQR,

@@ -146,10 +146,16 @@ class ZepirisService:
                 "is_sharp": bool(blur_res.is_sharp),
                 "probability": float(blur_res.probability),
             }
-            if not blur_res.is_sharp and blur_res.probability < 0.15:
+            if not blur_res.is_sharp:
                 results["passed"] = False
         except Exception as e:
-            print(f"[ZepirisService] Blur check skipped: {e}")
+            print(f"[ZepirisService] Blur check error: {e}")
+            results["blur"] = {
+                "is_sharp": False,
+                "probability": 0.0,
+                "error": "Sharpness assessment unavailable",
+            }
+            results["passed"] = False
 
         try:
             spoof_res = self.spoof_service.forward(image_rgb)
@@ -157,10 +163,16 @@ class ZepirisService:
                 "is_live": bool(spoof_res.is_live),
                 "probability": float(spoof_res.probability),
             }
-            if not spoof_res.is_live and spoof_res.probability > 0.85:
+            if not spoof_res.is_live:
                 results["passed"] = False
         except Exception as e:
-            print(f"[ZepirisService] Spoof check skipped: {e}")
+            print(f"[ZepirisService] Spoof check error: {e}")
+            results["spoof"] = {
+                "is_live": False,
+                "probability": 0.0,
+                "error": "Liveness check unavailable",
+            }
+            results["passed"] = False
 
         try:
             nsfw_res = self.nsfw_service.forward(image_rgb)
@@ -171,7 +183,13 @@ class ZepirisService:
             if not nsfw_res.is_safe:
                 results["passed"] = False
         except Exception as e:
-            print(f"[ZepirisService] NSFW check skipped: {e}")
+            print(f"[ZepirisService] NSFW check error: {e}")
+            results["nsfw"] = {
+                "is_safe": False,
+                "probability": 0.0,
+                "error": "Safety check unavailable",
+            }
+            results["passed"] = False
 
         return results
 

@@ -15,7 +15,8 @@ export function DynamicQRDisplay({
 }) {
   const { user } = useAttendance();
   const [qrToken, setQrToken] = useState('');
-  const [expiresIn, setExpiresIn] = useState(15);
+  const [expiresIn, setExpiresIn] = useState(5);
+  const [lifetimeSeconds, setLifetimeSeconds] = useState(5);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -40,7 +41,10 @@ export function DynamicQRDisplay({
 
         if (isMounted) {
           setQrToken(data.token);
-          setExpiresIn(data.expires_in ?? 15);
+          setExpiresIn(data.expires_in ?? 5);
+          if (data.lifetime_seconds) {
+            setLifetimeSeconds(data.lifetime_seconds);
+          }
           setError('');
         }
       } catch (err) {

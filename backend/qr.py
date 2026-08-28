@@ -10,7 +10,7 @@ from models import ClassSession
 
 qr = Blueprint("qr", __name__)
 
-QR_LIFETIME_SECONDS = 15
+QR_DEFAULT_LIFETIME_SECONDS = 5
 
 
 def now_utc():
@@ -33,6 +33,7 @@ def get_current_qr(session_id):
         }), 400
 
     current_time = now_utc()
+    lifetime = session.qr_lifetime_seconds if getattr(session, "qr_lifetime_seconds", None) else QR_DEFAULT_LIFETIME_SECONDS
 
     # Generate a new token when the current one has expired.
     if (
@@ -42,7 +43,7 @@ def get_current_qr(session_id):
     ):
         session.qr_token = secrets.token_urlsafe(24)
         session.qr_expires_at = current_time + timedelta(
-            seconds=QR_LIFETIME_SECONDS
+            seconds=lifetime
         )
 
         db.session.commit()
@@ -56,5 +57,6 @@ def get_current_qr(session_id):
         "session_id": session.id,
         "token": session.qr_token,
         "expires_at": session.qr_expires_at.isoformat(),
-        "expires_in": remaining_seconds
+        "expires_in": remaining_seconds,
+        "lifetime_seconds": lifetime
     }), 200

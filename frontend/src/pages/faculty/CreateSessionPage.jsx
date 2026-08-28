@@ -6,6 +6,7 @@ export function CreateSessionPage() {
   const { startFacultySession, subjects, fetchSubjects, navigate } = useAttendance();
 
   const [selectedSubjectId, setSelectedSubjectId] = useState('');
+  const [qrLifetime, setQrLifetime] = useState('5');
   const [duration, setDuration] = useState('60');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -24,9 +25,10 @@ export function CreateSessionPage() {
     setIsLoading(true);
 
     const subId = parseInt(selectedSubjectId, 10) || (subjects[0]?.id ?? 1);
+    const lifetime = parseInt(qrLifetime, 10) || 5;
 
     try {
-      await startFacultySession(subId);
+      await startFacultySession(subId, lifetime);
     } catch (err) {
       setError(err.message || 'Failed to start session');
       setIsLoading(false);
@@ -78,6 +80,25 @@ export function CreateSessionPage() {
                 <option value="">Loading subjects...</option>
               )}
             </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 text-neutral-700">
+              QR Code Security Rotation Interval
+            </label>
+            <select
+              value={qrLifetime}
+              onChange={(e) => setQrLifetime(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl text-sm neu-inset-light text-black font-semibold focus:border-black focus:bg-white focus:outline-none transition-all duration-150 cursor-pointer"
+            >
+              <option value="5">5 Seconds (Recommended Production Default)</option>
+              <option value="3">3 Seconds (Strict Anti-Sharing Mode)</option>
+              <option value="10">10 Seconds (Standard Classroom)</option>
+              <option value="15">15 Seconds (Relaxed Mode)</option>
+            </select>
+            <p className="text-[11px] text-neutral-400 mt-1">
+              Short rotation intervals prevent captured QR code sharing while maintaining high scan reliability.
+            </p>
           </div>
 
           <div>

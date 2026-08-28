@@ -1,19 +1,19 @@
 # AttendEase — College Attendance System
 
-AttendEase is a modern, digital college attendance tracking platform built for college classrooms and hackathon demos. Faculty can start an attendance session that displays a dynamic, rotating QR code with short-lived expiration tokens, students scan the QR using their smartphones over the local Wi-Fi network, and the backend verifies the student's authentication and records verified attendance in real time.
+AttendEase is a modern, production-ready digital college attendance tracking platform. Faculty can start an attendance session that displays a dynamic, rotating QR code with short-lived expiration tokens (5-second default lifetime, configurable by faculty), students scan the QR on their smartphones over any internet connection, and the backend verifies the student's authentication, server-side token validity, and real-time Zepiris facial biometrics before recording attendance.
 
 ---
 
 ## 🌟 Key Features
 
 - **Role-Based Authentication**: Separate secure login portals for Faculty and Students with JWT tokens.
-- **Faculty Session Control**: Select assigned subjects, launch attendance sessions, and monitor incoming check-ins in real time.
-- **Dynamic Rotating QR Codes**: Secure, short-lived tokens (15-second lifespan) automatically rotate to prevent replay attacks and proxy attendance.
-- **Student Mobile Scanner**: Responsive QR scanner utilizing HTML5 Camera APIs with a built-in testing code entry fallback.
-- **Real-Time Live Monitor**: Faculty dashboard dynamically updates as students mark attendance.
+- **Faculty Session Control**: Select assigned subjects, launch attendance sessions with configurable QR security rotation intervals (3s, 5s, 10s, 15s), and monitor incoming check-ins in real time.
+- **Dynamic Rotating QR Codes**: Secure, short-lived tokens (5-second default lifespan) automatically rotate server-side to prevent replay attacks and proxy attendance.
+- **Zepiris Biometric Facial Verification**: Embedded live camera facial recognition (InsightFace ArcFace 512-d embeddings with cosine similarity verification and anti-spoof/quality assessment).
+- **Faculty Manual Attendance Override**: Faculty can manually mark a student present with an audit reason in case of camera or device failure.
 - **Duplicate Attendance Prevention**: Database-level and API-level checks prevent students from marking attendance multiple times in the same session.
-- **Session Lifecycle & History**: Ending a session computes a final attendance summary while permanently storing attendance records.
-- **Local Network Support**: Designed to run seamlessly across devices on local Wi-Fi (e.g. `192.168.1.147`).
+- **Session Lifecycle & History**: Ending a session computes a final attendance summary while permanently storing attendance audit records.
+- **Public HTTPS Architecture**: Seamlessly works across any standard public network connection with zero local hotspot or same-Wi-Fi restrictions.
 
 ---
 
