@@ -4,8 +4,8 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 
 export function Login() {
-  const { login, navigate } = useAttendance();
-  const [email, setEmail] = useState('');
+  const { login } = useAttendance();
+  const [rollNumber, setRollNumber] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,9 +16,9 @@ export function Login() {
     setIsLoading(true);
 
     try {
-      await login(email.trim(), password);
+      await login(rollNumber.trim(), password);
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.message || 'Invalid credentials. Please check your roll number/ID and password.');
     } finally {
       setIsLoading(false);
     }
@@ -42,13 +42,13 @@ export function Login() {
             AttendEase
           </h1>
           <p className="text-xs text-neutral-400 mt-1 font-medium">
-            Smart Attendance with Zepiris Biometrics
+            Smart Attendance
           </p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-5 p-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-medium text-center">
+          <div className="mb-5 p-3.5 rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-medium text-center">
             {error}
           </div>
         )}
@@ -56,25 +56,26 @@ export function Login() {
         {/* Login Form */}
         <form onSubmit={handleSignIn} className="space-y-4">
           <Input
-            label="Email Address"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@university.edu"
+            label="ROLL NUMBER"
+            type="text"
+            value={rollNumber}
+            onChange={(e) => setRollNumber(e.target.value)}
+            placeholder="Enter roll number"
             variant="dark"
             required
+            autoFocus
           />
           <Input
-            label="Password"
+            label="PASSWORD"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder="Enter password"
             variant="dark"
             required
           />
 
-          <div className="pt-2">
+          <div className="pt-3">
             <Button
               type="submit"
               variant="white"
@@ -86,20 +87,6 @@ export function Login() {
             </Button>
           </div>
         </form>
-
-        {/* Registration Link */}
-        <div className="mt-6 pt-5 border-t border-white/10 text-center">
-          <p className="text-xs text-neutral-400 font-medium">
-            Don't have an account?{' '}
-            <button
-              type="button"
-              onClick={() => navigate('/register')}
-              className="text-white font-bold hover:underline cursor-pointer ml-1"
-            >
-              Create Account
-            </button>
-          </p>
-        </div>
       </div>
     </div>
   );

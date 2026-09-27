@@ -8,7 +8,7 @@ from flask_jwt_extended import JWTManager
 
 from database import db
 from auth import auth
-from attendance import attendance
+from attendance import attendance, faculty_bp
 from qr import qr
 from face_routes import face_bp
 
@@ -37,6 +37,7 @@ def create_app():
 
     app.register_blueprint(auth, url_prefix="/api/auth")
     app.register_blueprint(attendance, url_prefix="/api/attendance")
+    app.register_blueprint(faculty_bp, url_prefix="/api/faculty")
     app.register_blueprint(qr, url_prefix="/api/qr")
     app.register_blueprint(face_bp, url_prefix="/api/student/face")
 

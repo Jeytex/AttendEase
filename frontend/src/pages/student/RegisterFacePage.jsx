@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useAttendance } from '../../context/AttendanceContext';
 import { Button } from '../../components/ui/Button';
+import { cameraManager } from '../../utils/cameraManager';
 
 export function RegisterFacePage() {
   const { user, registerFace, logout } = useAttendance();
@@ -32,13 +33,7 @@ export function RegisterFacePage() {
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => {
-        try {
-          track.stop();
-        } catch {
-          // Track already stopped
-        }
-      });
+      cameraManager.stopStream(streamRef.current);
       streamRef.current = null;
     }
     if (videoRef.current) {
@@ -53,8 +48,9 @@ export function RegisterFacePage() {
       setCameraError('');
       setErrorMessage('');
 
+      // Clean up previous stream before opening a new one
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach((t) => t.stop());
+        cameraManager.stopStream(streamRef.current);
         streamRef.current = null;
       }
 
@@ -71,6 +67,7 @@ export function RegisterFacePage() {
         };
 
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        cameraManager.register(stream);
         streamRef.current = stream;
 
         if (videoRef.current) {
@@ -108,6 +105,7 @@ export function RegisterFacePage() {
     startCamera(facingMode);
     return () => {
       stopCamera();
+      cameraManager.stopAll();
     };
   }, [facingMode, startCamera, stopCamera]);
 

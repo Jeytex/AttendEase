@@ -58,7 +58,7 @@ export function AttendanceHistory() {
       {/* Subject Breakdown */}
       <div>
         <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">
-          Subject Overview (BS501 – BS508)
+          Subject Attendance Breakdown
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {subjectStats.map((sub) => (

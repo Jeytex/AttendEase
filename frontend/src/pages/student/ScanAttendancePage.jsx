@@ -3,6 +3,7 @@ import { useAttendance } from '../../context/AttendanceContext';
 import { QRScanner } from '../../components/attendance/QRScanner';
 import { AttendanceSuccess } from '../../components/attendance/AttendanceSuccess';
 import { Button } from '../../components/ui/Button';
+import { cameraManager } from '../../utils/cameraManager';
 
 export function ScanAttendancePage() {
   const { navigate, scannedQR, setScannedQR, markAttendance } = useAttendance();
@@ -40,13 +41,7 @@ export function ScanAttendancePage() {
   // Stop active media stream tracks cleanly
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => {
-        try {
-          track.stop();
-        } catch {
-          // Track already stopped
-        }
-      });
+      cameraManager.stopStream(streamRef.current);
       streamRef.current = null;
     }
     if (videoRef.current) {
@@ -63,7 +58,7 @@ export function ScanAttendancePage() {
 
       // Stop any existing stream before starting a new one
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
+        cameraManager.stopStream(streamRef.current);
         streamRef.current = null;
       }
 
@@ -81,6 +76,7 @@ export function ScanAttendancePage() {
         };
 
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        cameraManager.register(stream);
         streamRef.current = stream;
 
         if (videoRef.current) {
@@ -128,6 +124,7 @@ export function ScanAttendancePage() {
 
     return () => {
       stopCamera();
+      cameraManager.stopAll();
     };
   }, [step, facingMode, startCamera, stopCamera]);
 

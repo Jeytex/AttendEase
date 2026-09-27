@@ -51,6 +51,25 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
     def setUp(self):
         self.app = self.__class__.app
         self.client = self.__class__.client
+        self.created_user_ids = []
+        self.created_session_ids = []
+
+    def tearDown(self):
+        with self.app.app_context():
+            if getattr(self, "created_session_ids", None):
+                Attendance.query.filter(Attendance.class_session_id.in_(self.created_session_ids)).delete(synchronize_session=False)
+            if getattr(self, "created_user_ids", None):
+                students = Student.query.filter(Student.user_id.in_(self.created_user_ids)).all()
+                stu_ids = [s.id for s in students]
+                if stu_ids:
+                    Attendance.query.filter(Attendance.student_id.in_(stu_ids)).delete(synchronize_session=False)
+                    FaceProfile.query.filter(FaceProfile.student_id.in_(stu_ids)).delete(synchronize_session=False)
+                    Student.query.filter(Student.id.in_(stu_ids)).delete(synchronize_session=False)
+                FacultyProfile.query.filter(FacultyProfile.user_id.in_(self.created_user_ids)).delete(synchronize_session=False)
+                if getattr(self, "created_session_ids", None):
+                    ClassSession.query.filter(ClassSession.id.in_(self.created_session_ids)).delete(synchronize_session=False)
+                User.query.filter(User.id.in_(self.created_user_ids)).delete(synchronize_session=False)
+            db.session.commit()
 
     def test_all_twenty_two_scenarios(self):
         print("\n=======================================================")
@@ -72,7 +91,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
             "nsfw": {"is_safe": True, "probability": 0.99},
         }
 
-        ts = int(datetime.now().timestamp() * 1000)
+        ts = int(time.time_ns())
 
         # ----------------------------------------------------
         # SCENARIO 1: Create a new student account (Alice)
@@ -92,6 +111,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
         reg_data = reg_res.get_json()
         alice_token = reg_data["access_token"]
         alice_user_id = reg_data["user_id"]
+        self.created_user_ids.append(alice_user_id)
         alice_roll = reg_data["roll_number"]
         self.assertEqual(reg_data["status"], "face_registration_pending")
         print(f"SCENARIO 1 PASSED: Student account created. Status: {reg_data['status']}")
@@ -119,6 +139,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
                     json={"image_base64": dummy_image}
                 )
         self.assertEqual(face_reg_res.status_code, 200)
+        self.assertEqual(face_reg_res.get_json()["status"], "active")
         print("SCENARIO 3 PASSED: Face registered and linked to Alice.")
 
         # ----------------------------------------------------
@@ -126,7 +147,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
         # ----------------------------------------------------
         print("\n--- SCENARIO 4: Login as Active Student ---")
         login_res = self.client.post("/api/auth/login", json={
-            "email": student_email,
+            "identifier": alice_roll,
             "password": "Password123!"
         })
         self.assertEqual(login_res.status_code, 200)
@@ -151,6 +172,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
         self.assertEqual(fac_reg_res.status_code, 201)
         fac_token = fac_reg_res.get_json()["access_token"]
         fac_user_id = fac_reg_res.get_json()["user_id"]
+        self.created_user_ids.append(fac_user_id)
         print("SCENARIO 5 PASSED: Faculty account created with zero biometric requirements.")
 
         # ----------------------------------------------------
@@ -169,6 +191,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
         self.assertEqual(sess_res.status_code, 201)
         sess_data = sess_res.get_json()["session"]
         sess_id = sess_data["id"]
+        self.created_session_ids.append(sess_id)
         self.assertEqual(sess_data["qr_lifetime_seconds"], 5)
 
         qr_res = self.client.get(
@@ -197,6 +220,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
             "roll_number": bob_roll
         })
         bob_token = bob_reg.get_json()["access_token"]
+        self.created_user_ids.append(bob_reg.get_json()["user_id"])
         with patch.object(zepiris_service, "assess_quality", return_value=passed_quality):
             with patch.object(zepiris_service, "extract_face_embedding", return_value=(np.array(self.student_bob_emb, dtype=np.float32), {"face_detected": True, "embedding_dim": 512})):
                 self.client.post(
@@ -269,6 +293,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
             "roll_number": david_roll
         })
         david_token = david_reg.get_json()["access_token"]
+        self.created_user_ids.append(david_reg.get_json()["user_id"])
         with patch.object(zepiris_service, "assess_quality", return_value=passed_quality):
             with patch.object(zepiris_service, "extract_face_embedding", return_value=(np.array(self.student_bob_emb, dtype=np.float32), {"face_detected": True, "embedding_dim": 512})):
                 self.client.post(
@@ -336,6 +361,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
             "roll_number": charlie_roll
         })
         charlie_token = charlie_reg.get_json()["access_token"]
+        self.created_user_ids.append(charlie_reg.get_json()["user_id"])
         with patch.object(zepiris_service, "assess_quality", return_value=passed_quality):
             with patch.object(zepiris_service, "extract_face_embedding", return_value=(np.array(self.student_charlie_emb, dtype=np.float32), {"face_detected": True, "embedding_dim": 512})):
                 self.client.post(
@@ -389,6 +415,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
             db.session.add(exp_session)
             db.session.commit()
             exp_sess_id = exp_session.id
+            self.created_session_ids.append(exp_sess_id)
 
         with patch.object(zepiris_service, "assess_quality", return_value=passed_quality):
             with patch.object(zepiris_service, "extract_face_embedding", return_value=(np.array(self.student_charlie_emb, dtype=np.float32), {"face_detected": True, "embedding_dim": 512})):

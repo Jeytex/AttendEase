@@ -102,7 +102,7 @@ export function DynamicQRDisplay({
       ) : (
         <>
           <p className="text-xs text-neutral-400 font-medium mb-1">
-            Dynamic QR rotates automatically
+            Dynamic QR rotates automatically ({lifetimeSeconds}s window)
           </p>
           <p className="text-sm font-extrabold font-mono text-white mb-6">
             Next refresh in <span className="text-emerald-400">{expiresIn}s</span>

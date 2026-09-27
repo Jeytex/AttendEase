@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { cameraManager } from '../../utils/cameraManager';
 
 export function QRScanner({ onScanSuccess, isSubmitting = false, externalError = '' }) {
   const [scanState, setScanState] = useState('scanning'); // 'scanning' | 'detected' | 'verified'
@@ -30,6 +31,7 @@ export function QRScanner({ onScanSuccess, isSubmitting = false, externalError =
       }
       scannerRef.current = null;
     }
+    cameraManager.stopAll();
   };
 
   useEffect(() => {

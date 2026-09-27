@@ -7,19 +7,35 @@ export function Navbar({ onMobileMenuToggle }) {
   const getPageTitle = (route) => {
     switch (route) {
       case '/student':
-        return 'Dashboard';
+        return 'Student Dashboard';
       case '/student/scan':
         return 'Mark Attendance';
       case '/student/verify':
         return 'Verify Identity';
       case '/student/history':
         return 'Attendance History';
+      case '/student/profile':
+        return 'Student Profile';
       case '/faculty':
-        return 'Faculty Dashboard';
+        return 'Administration Dashboard';
+      case '/faculty/students':
+        return 'Student Management';
+      case '/faculty/faculty-members':
+        return 'Faculty Management';
+      case '/faculty/subjects':
+        return 'Subject Catalog';
+      case '/faculty/sessions':
+        return 'Session Management';
       case '/faculty/session':
         return 'Start Attendance';
       case '/faculty/monitor':
         return 'Live Attendance Monitor';
+      case '/faculty/attendance':
+        return 'Attendance Records';
+      case '/faculty/timetable':
+        return 'Timetable Management';
+      case '/faculty/settings':
+        return 'System & Security Settings';
       default:
         return 'AttendEase';
     }

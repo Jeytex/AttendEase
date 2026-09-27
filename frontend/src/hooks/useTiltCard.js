@@ -7,7 +7,7 @@ export function useTiltCard() {
   });
   const cardRef = useRef(null);
 
-  const handleMouseMove = useCallback((e) => {
+  const handleMouseMove = useCallback(() => {
     if (!cardRef.current) return;
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (mediaQuery.matches) return;

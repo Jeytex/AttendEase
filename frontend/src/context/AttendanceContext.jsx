@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 
 import { API_URL, getAuthHeaders } from '../api/config';
+import { cameraManager } from '../utils/cameraManager';
 
 const AttendanceContext = createContext(null);
 
@@ -73,6 +74,9 @@ export function AttendanceProvider({ children }) {
   // ============================================================
 
   const navigate = useCallback((path) => {
+    // Stop all active camera hardware streams before transitioning routes
+    cameraManager.stopAll();
+
     setCurrentRoute(path);
 
     window.scrollTo({
@@ -150,14 +154,16 @@ export function AttendanceProvider({ children }) {
   // AUTH: LOGIN
   // ============================================================
 
-  const login = async (email, password) => {
+  const login = async (identifier, password) => {
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email,
+        identifier: identifier ? identifier.trim() : '',
+        email: identifier ? identifier.trim() : '',
+        roll_number: identifier ? identifier.trim() : '',
         password,
       }),
     });
@@ -170,7 +176,7 @@ export function AttendanceProvider({ children }) {
 
     const authUser = {
       ...data,
-      email,
+      email: data.email || identifier,
     };
 
     setUser(authUser);
@@ -194,6 +200,9 @@ export function AttendanceProvider({ children }) {
   // ============================================================
 
   const logout = () => {
+    // Explicitly shut down all hardware camera tracks immediately on logout
+    cameraManager.stopAll();
+
     setUser(null);
     setActiveSession(null);
     setEndedSession(null);
@@ -540,6 +549,288 @@ export function AttendanceProvider({ children }) {
   };
 
   // ============================================================
+  // STUDENT DASHBOARD & PROFILE API METHODS
+  // ============================================================
+
+  const fetchStudentDashboard = useCallback(async () => {
+    if (!user || user.role !== 'student') return null;
+    try {
+      const res = await fetch(`${API_URL}/api/attendance/student/dashboard`, {
+        headers: getAuthHeaders(user.access_token),
+      });
+      const data = await res.json();
+      if (res.ok) return data;
+    } catch (err) {
+      console.error('Error fetching student dashboard:', err);
+    }
+    return null;
+  }, [user]);
+
+  const fetchStudentProfile = useCallback(async () => {
+    if (!user || user.role !== 'student') return null;
+    try {
+      const res = await fetch(`${API_URL}/api/attendance/student/me`, {
+        headers: getAuthHeaders(user.access_token),
+      });
+      const data = await res.json();
+      if (res.ok && data.student) return data.student;
+    } catch (err) {
+      console.error('Error fetching student profile:', err);
+    }
+    return null;
+  }, [user]);
+
+  // ============================================================
+  // FACULTY ADMIN API METHODS
+  // ============================================================
+
+  const fetchAdminStats = useCallback(async () => {
+    if (!user || user.role !== 'faculty') return null;
+    try {
+      const res = await fetch(`${API_URL}/api/attendance/admin/stats`, {
+        headers: getAuthHeaders(user.access_token),
+      });
+      const data = await res.json();
+      if (res.ok) return data;
+    } catch (err) {
+      console.error('Error fetching admin stats:', err);
+    }
+    return null;
+  }, [user]);
+
+  const fetchStudents = useCallback(async (search = '') => {
+    if (!user || user.role !== 'faculty') return [];
+    try {
+      const q = search ? `?search=${encodeURIComponent(search)}` : '';
+      const res = await fetch(`${API_URL}/api/attendance/admin/students${q}`, {
+        headers: getAuthHeaders(user.access_token),
+      });
+      const data = await res.json();
+      if (res.ok && data.students) return data.students;
+    } catch (err) {
+      console.error('Error fetching students:', err);
+    }
+    return [];
+  }, [user]);
+
+  const createStudent = async (studentData) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/admin/students`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user.access_token),
+      },
+      body: JSON.stringify(studentData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to enroll student');
+    return data;
+  };
+
+  const updateStudent = async (studentId, studentData) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/admin/students/${studentId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user.access_token),
+      },
+      body: JSON.stringify(studentData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to update student');
+    return data;
+  };
+
+  const resetStudentFace = async (studentId) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/admin/students/${studentId}/reset-face`, {
+      method: 'POST',
+      headers: getAuthHeaders(user.access_token),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to reset face registration');
+    return data;
+  };
+
+  const deleteStudent = async (studentId) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/admin/students/${studentId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user.access_token),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to delete student');
+    return data;
+  };
+
+  const fetchFacultyList = useCallback(async (search = '') => {
+    if (!user || user.role !== 'faculty') return [];
+    try {
+      const q = search ? `?search=${encodeURIComponent(search)}` : '';
+      const res = await fetch(`${API_URL}/api/attendance/admin/faculty${q}`, {
+        headers: getAuthHeaders(user.access_token),
+      });
+      const data = await res.json();
+      if (res.ok && data.faculty) return data.faculty;
+    } catch (err) {
+      console.error('Error fetching faculty list:', err);
+    }
+    return [];
+  }, [user]);
+
+  const createFacultyMember = async (facultyData) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/admin/faculty`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user.access_token),
+      },
+      body: JSON.stringify(facultyData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to create faculty account');
+    return data;
+  };
+
+  const updateFacultyMember = async (facultyId, facultyData) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/admin/faculty/${facultyId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user.access_token),
+      },
+      body: JSON.stringify(facultyData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to update faculty');
+    return data;
+  };
+
+  const deleteFacultyMember = async (facultyId) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/admin/faculty/${facultyId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user.access_token),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to delete faculty');
+    return data;
+  };
+
+  const createSubject = async (subjectData) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/subjects`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user.access_token),
+      },
+      body: JSON.stringify(subjectData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to create subject');
+    await fetchSubjects();
+    return data;
+  };
+
+  const updateSubject = async (subjectId, subjectData) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/subjects/${subjectId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user.access_token),
+      },
+      body: JSON.stringify(subjectData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to update subject');
+    await fetchSubjects();
+    return data;
+  };
+
+  const deleteSubject = async (subjectId) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/subjects/${subjectId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user.access_token),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to delete subject');
+    await fetchSubjects();
+    return data;
+  };
+
+  const fetchAllAttendanceRecords = useCallback(async (params = {}) => {
+    if (!user || user.role !== 'faculty') return [];
+    try {
+      const queryParams = new URLSearchParams();
+      if (params.subject_id) queryParams.append('subject_id', params.subject_id);
+      if (params.session_id) queryParams.append('session_id', params.session_id);
+      if (params.method) queryParams.append('method', params.method);
+      if (params.search) queryParams.append('search', params.search);
+      const qs = queryParams.toString() ? `?${queryParams.toString()}` : '';
+
+      const res = await fetch(`${API_URL}/api/attendance/records/all${qs}`, {
+        headers: getAuthHeaders(user.access_token),
+      });
+      const data = await res.json();
+      if (res.ok && data.records) return data.records;
+    } catch (err) {
+      console.error('Error fetching all records:', err);
+    }
+    return [];
+  }, [user]);
+
+  const createTimetableSlot = async (slotData) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/timetable`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user.access_token),
+      },
+      body: JSON.stringify(slotData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to add timetable slot');
+    await fetchTimetable();
+    return data;
+  };
+
+  const updateTimetableSlot = async (slotId, slotData) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/timetable/${slotId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user.access_token),
+      },
+      body: JSON.stringify(slotData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to update timetable slot');
+    await fetchTimetable();
+    return data;
+  };
+
+  const deleteTimetableSlot = async (slotId) => {
+    if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
+    const res = await fetch(`${API_URL}/api/attendance/timetable/${slotId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user.access_token),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to delete timetable slot');
+    await fetchTimetable();
+    return data;
+  };
+
+  // ============================================================
   // CONTEXT VALUE
   // ============================================================
 
@@ -565,7 +856,7 @@ export function AttendanceProvider({ children }) {
         timetable,
         fetchTimetable,
 
-        // Faculty
+        // Faculty & Admin
         activeSession,
         setActiveSession,
         liveStudents,
@@ -576,6 +867,23 @@ export function AttendanceProvider({ children }) {
         startFacultySession,
         endFacultySession,
         manualMarkAttendance,
+        fetchAdminStats,
+        fetchStudents,
+        createStudent,
+        updateStudent,
+        resetStudentFace,
+        deleteStudent,
+        fetchFacultyList,
+        createFacultyMember,
+        updateFacultyMember,
+        deleteFacultyMember,
+        createSubject,
+        updateSubject,
+        deleteSubject,
+        fetchAllAttendanceRecords,
+        createTimetableSlot,
+        updateTimetableSlot,
+        deleteTimetableSlot,
 
         // Student
         scannedQR,
@@ -584,6 +892,8 @@ export function AttendanceProvider({ children }) {
         fetchStudentHistory,
         studentHistory,
         studentStats,
+        fetchStudentDashboard,
+        fetchStudentProfile,
       }}
     >
       {children}

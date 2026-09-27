@@ -7,7 +7,6 @@ export function CreateSessionPage() {
 
   const [selectedSubjectId, setSelectedSubjectId] = useState('');
   const [qrLifetime, setQrLifetime] = useState('5');
-  const [duration, setDuration] = useState('60');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -59,7 +58,7 @@ export function CreateSessionPage() {
       )}
 
       {/* Session Form Card */}
-      <div className="bg-white border border-neutral-200 rounded-3xl p-7 shadow-xs">
+      <div className="bg-white border border-neutral-200 rounded-3xl p-6 md:p-7 shadow-xs">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 text-neutral-700">
@@ -101,25 +100,12 @@ export function CreateSessionPage() {
             </p>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 text-neutral-700">
-              Session Duration (Minutes)
-            </label>
-            <input
-              type="number"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              placeholder="60"
-              className="w-full px-4 py-2.5 rounded-xl text-sm neu-inset-light text-black font-mono focus:border-black focus:bg-white focus:outline-none transition-all duration-150"
-            />
-          </div>
-
           <div className="pt-2">
             <Button
               type="submit"
               variant="primary"
               size="lg"
-              className="w-full shadow-md"
+              className="w-full shadow-md font-bold"
               disabled={isLoading || !selectedSubjectId}
             >
               {isLoading ? 'Starting Session...' : 'Generate QR & Start Session'}

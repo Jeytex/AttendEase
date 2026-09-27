@@ -11,7 +11,16 @@ import { RegisterFacePage } from './pages/student/RegisterFacePage';
 import { StudentDashboard } from './pages/student/Dashboard';
 import { ScanAttendancePage } from './pages/student/ScanAttendancePage';
 import { AttendanceHistory } from './pages/student/AttendanceHistory';
+import { ProfilePage } from './pages/student/ProfilePage';
+// Faculty Pages
 import { FacultyDashboard } from './pages/faculty/Dashboard';
+import { StudentsPage } from './pages/faculty/StudentsPage';
+import { FacultyPage } from './pages/faculty/FacultyPage';
+import { SubjectsPage } from './pages/faculty/SubjectsPage';
+import { SessionsPage } from './pages/faculty/SessionsPage';
+import { AttendancePage } from './pages/faculty/AttendancePage';
+import { TimetablePage } from './pages/faculty/TimetablePage';
+import { SettingsPage } from './pages/faculty/SettingsPage';
 import { CreateSessionPage } from './pages/faculty/CreateSessionPage';
 import { QRSessionPage } from './pages/faculty/QRSessionPage';
 
@@ -46,8 +55,24 @@ function AppContent() {
         return <ScanAttendancePage />;
       case '/student/history':
         return <AttendanceHistory />;
+      case '/student/profile':
+        return <ProfilePage />;
       case '/faculty':
         return <FacultyDashboard />;
+      case '/faculty/students':
+        return <StudentsPage />;
+      case '/faculty/faculty-members':
+        return <FacultyPage />;
+      case '/faculty/subjects':
+        return <SubjectsPage />;
+      case '/faculty/sessions':
+        return <SessionsPage />;
+      case '/faculty/attendance':
+        return <AttendancePage />;
+      case '/faculty/timetable':
+        return <TimetablePage />;
+      case '/faculty/settings':
+        return <SettingsPage />;
       case '/faculty/session':
         return <CreateSessionPage />;
       case '/faculty/monitor':

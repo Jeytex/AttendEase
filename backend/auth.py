@@ -134,16 +134,36 @@ def register():
 def login():
     data = request.get_json() or {}
 
-    email = data.get("email", "").strip().lower()
+    identifier = (
+        data.get("identifier")
+        or data.get("roll_number")
+        or data.get("email")
+        or ""
+    ).strip()
     password = data.get("password", "")
 
-    if not email or not password:
-        return jsonify({"error": "Email and password are required"}), 400
+    if not identifier or not password:
+        return jsonify({"error": "Roll number / Email and password are required"}), 400
 
-    user = User.query.filter_by(email=email).first()
+    user = None
+
+    # 1. Try finding student by roll number
+    student = Student.query.filter(Student.roll_number.ilike(identifier)).first()
+    if student:
+        user = student.user
+
+    # 2. If not student, try finding faculty by faculty_id_code
+    if not user:
+        fac = FacultyProfile.query.filter(FacultyProfile.faculty_id_code.ilike(identifier)).first()
+        if fac:
+            user = fac.user
+
+    # 3. If not found by roll/code, try finding user by email
+    if not user:
+        user = User.query.filter(User.email.ilike(identifier)).first()
 
     if not user or not check_password_hash(user.password, password):
-        return jsonify({"error": "Invalid email or password"}), 401
+        return jsonify({"error": "Invalid credentials. Please check your roll number/email and password."}), 401
 
     access_token = create_access_token(
         identity=str(user.id),
