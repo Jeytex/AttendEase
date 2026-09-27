@@ -1,0 +1,36 @@
+From 593a7b650f4bc9b28849cb80bb08e99125c944dc Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:42 +0530
+Subject: [PATCH] ui(student): default timetable day tab to current weekday on
+ Dashboard
+
+---
+ frontend/src/pages/student/Dashboard.jsx | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/frontend/src/pages/student/Dashboard.jsx b/frontend/src/pages/student/Dashboard.jsx
+index a98ffdd..acc96cd 100644
+--- a/frontend/src/pages/student/Dashboard.jsx
++++ b/frontend/src/pages/student/Dashboard.jsx
+@@ -2,11 +2,17 @@ import React, { useEffect, useState, useCallback } from 'react';
+ import { useAttendance } from '../../context/AttendanceContext';
+ import { Button } from '../../components/ui/Button';
+ 
++const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
++const getInitialWeekday = () => {
++  const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
++  return WEEKDAYS.includes(dayName) ? dayName : 'Monday';
++};
++
+ export function StudentDashboard() {
+   const { user, fetchStudentDashboard, navigate } = useAttendance();
+   const [dashboardData, setDashboardData] = useState(null);
+   const [loading, setLoading] = useState(true);
+-  const [selectedDay, setSelectedDay] = useState('Monday');
++  const [selectedDay, setSelectedDay] = useState(getInitialWeekday);
+ 
+   const loadData = useCallback(async () => {
+     setLoading(true);
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,45 @@
+From 21b6037f15715fa78089a0baa8943feca53ac95c Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:40 +0530
+Subject: [PATCH] fix(ui): automatically close mobile navigation drawer on
+ route change
+
+---
+ frontend/src/App.jsx | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
+index bd80053..6208f0c 100644
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -26,7 +26,8 @@ import { QRSessionPage } from './pages/faculty/QRSessionPage';
+ 
+ function AppContent() {
+   const { currentRoute, user, userRole } = useAttendance();
+-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
++  const [mobileMenuRoute, setMobileMenuRoute] = useState(null);
++  const mobileMenuOpen = mobileMenuRoute === currentRoute;
+   useMousePosition();
+ 
+   // 1. Unauthenticated views
+@@ -92,7 +93,7 @@ function AppContent() {
+         <div className="fixed inset-0 z-50 flex md:hidden">
+           <div
+             className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+-            onClick={() => setMobileMenuOpen(false)}
++            onClick={() => setMobileMenuRoute(null)}
+           />
+           <Sidebar className="relative z-10 w-72 h-full bg-white shadow-2xl" />
+         </div>
+@@ -100,7 +101,7 @@ function AppContent() {
+ 
+       {/* Main Content Body */}
+       <div className="flex-1 flex flex-col min-w-0">
+-        <Navbar onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
++        <Navbar onMobileMenuToggle={() => setMobileMenuRoute(mobileMenuOpen ? null : currentRoute)} />
+ 
+         <main className="flex-1 p-4 md:p-8 max-w-6xl w-full mx-auto">
+           {renderView()}
+-- 
+2.55.0.windows.5
+

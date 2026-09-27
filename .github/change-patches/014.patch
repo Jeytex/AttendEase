@@ -1,0 +1,25 @@
+From effb37967c85dfa24dd6b90b1bc1b7b328eb7e8d Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:33 +0530
+Subject: [PATCH] chore(auth): remove unused FaceProfile import
+
+---
+ backend/auth.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backend/auth.py b/backend/auth.py
+index 5ee3f81..8e65681 100644
+--- a/backend/auth.py
++++ b/backend/auth.py
+@@ -6,7 +6,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
+ from werkzeug.security import generate_password_hash, check_password_hash
+ 
+ from database import db
+-from models import User, Student, FacultyProfile, FaceProfile, now_utc
++from models import User, Student, FacultyProfile, now_utc
+ 
+ auth = Blueprint("auth", __name__)
+ 
+-- 
+2.55.0.windows.5
+

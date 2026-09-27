@@ -1,0 +1,34 @@
+From f45fc086618474103c5f6cc9364b51c292915bc3 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:33 +0530
+Subject: [PATCH] fix(auth): use silent=True in request.get_json calls
+
+---
+ backend/auth.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/backend/auth.py b/backend/auth.py
+index 97c254c..c2f3900 100644
+--- a/backend/auth.py
++++ b/backend/auth.py
+@@ -25,7 +25,7 @@ def _issue_user_token(user: User) -> str:
+ 
+ @auth.route("/register", methods=["POST"])
+ def register():
+-    data = request.get_json() or {}
++    data = request.get_json(silent=True) or {}
+ 
+     name = data.get("name", "").strip()
+     email = data.get("email", "").strip().lower()
+@@ -142,7 +142,7 @@ def register():
+ 
+ @auth.route("/login", methods=["POST"])
+ def login():
+-    data = request.get_json() or {}
++    data = request.get_json(silent=True) or {}
+ 
+     identifier = (
+         data.get("identifier")
+-- 
+2.55.0.windows.5
+

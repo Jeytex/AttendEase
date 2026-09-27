@@ -1,0 +1,33 @@
+From 10b25461ad6638d626ab7e3e9c4ea67d74878a57 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:44 +0530
+Subject: [PATCH] fix(camera): verify video dimensions before canvas capture in
+ ScanAttendancePage
+
+---
+ frontend/src/pages/student/ScanAttendancePage.jsx | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/frontend/src/pages/student/ScanAttendancePage.jsx b/frontend/src/pages/student/ScanAttendancePage.jsx
+index 562fe86..6d09fbd 100644
+--- a/frontend/src/pages/student/ScanAttendancePage.jsx
++++ b/frontend/src/pages/student/ScanAttendancePage.jsx
+@@ -162,8 +162,13 @@ export function ScanAttendancePage() {
+     const video = videoRef.current;
+     const canvas = canvasRef.current;
+ 
+-    const width = video.videoWidth || 640;
+-    const height = video.videoHeight || 480;
++    if (!video.videoWidth || !video.videoHeight) {
++      setError('Camera stream is still initializing. Please wait a moment and try again.');
++      return;
++    }
++
++    const width = video.videoWidth;
++    const height = video.videoHeight;
+ 
+     canvas.width = width;
+     canvas.height = height;
+-- 
+2.55.0.windows.5
+

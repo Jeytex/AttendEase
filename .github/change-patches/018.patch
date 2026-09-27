@@ -1,0 +1,40 @@
+From 8dcef40cc89dc4128ad67bf0dcc7532260fb1cf0 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:33 +0530
+Subject: [PATCH] feat(auth): include faculty department in /api/auth/me
+ response
+
+---
+ backend/auth.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/backend/auth.py b/backend/auth.py
+index c2f3900..5b9288c 100644
+--- a/backend/auth.py
++++ b/backend/auth.py
+@@ -224,6 +224,7 @@ def get_current_user():
+ 
+     roll_number = None
+     faculty_id_code = None
++    department = None
+     status = "active"
+     requires_face_registration = False
+     face_registered = False
+@@ -238,6 +239,7 @@ def get_current_user():
+     elif user.role == "faculty":
+         fac = FacultyProfile.query.filter_by(user_id=user.id).first()
+         faculty_id_code = fac.faculty_id_code if fac else None
++        department = fac.department if fac else None
+ 
+     return jsonify({
+         "user_id": user.id,
+@@ -249,4 +251,5 @@ def get_current_user():
+         "requires_face_registration": requires_face_registration,
+         "roll_number": roll_number,
+         "faculty_id": faculty_id_code,
++        "department": department,
+     }), 200
+\ No newline at end of file
+-- 
+2.55.0.windows.5
+

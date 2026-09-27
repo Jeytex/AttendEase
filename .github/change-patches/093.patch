@@ -1,0 +1,33 @@
+From 8ea8dbb5ef7bc3cbf21f3a47dd255b910ba4448a Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:43 +0530
+Subject: [PATCH] fix(camera): verify video dimensions before canvas capture in
+ RegisterFacePage
+
+---
+ frontend/src/pages/student/RegisterFacePage.jsx | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/frontend/src/pages/student/RegisterFacePage.jsx b/frontend/src/pages/student/RegisterFacePage.jsx
+index 1de94eb..52fc64e 100644
+--- a/frontend/src/pages/student/RegisterFacePage.jsx
++++ b/frontend/src/pages/student/RegisterFacePage.jsx
+@@ -123,8 +123,13 @@ export function RegisterFacePage() {
+     const video = videoRef.current;
+     const canvas = canvasRef.current;
+ 
+-    const width = video.videoWidth || 640;
+-    const height = video.videoHeight || 480;
++    if (!video.videoWidth || !video.videoHeight) {
++      setErrorMessage('Camera stream is still initializing. Please wait a moment and try again.');
++      return;
++    }
++
++    const width = video.videoWidth;
++    const height = video.videoHeight;
+ 
+     canvas.width = width;
+     canvas.height = height;
+-- 
+2.55.0.windows.5
+

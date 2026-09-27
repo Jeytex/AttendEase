@@ -1,0 +1,26 @@
+From e08d49f2a466176388812220a412bed99abc11e1 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:32 +0530
+Subject: [PATCH] chore(models): add __repr__ to Attendance model
+
+---
+ backend/models.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/backend/models.py b/backend/models.py
+index 673a0c1..969cae4 100644
+--- a/backend/models.py
++++ b/backend/models.py
+@@ -125,6 +125,9 @@ class Attendance(db.Model):
+     class_session = db.relationship("ClassSession")
+     verifier = db.relationship("User", foreign_keys=[verified_by_faculty_id])
+ 
++    def __repr__(self):
++        return f"<Attendance student={self.student_id} session={self.class_session_id}>"
++
+ 
+ class TimetableSlot(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+-- 
+2.55.0.windows.5
+

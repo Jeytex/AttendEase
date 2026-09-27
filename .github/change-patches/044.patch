@@ -1,0 +1,26 @@
+From 875657d76c2961ea939715aba3dca248d562b58c Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:37 +0530
+Subject: [PATCH] fix(zepiris): raise clear ValueError on empty string in
+ decode_image
+
+---
+ backend/zepiris_service.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backend/zepiris_service.py b/backend/zepiris_service.py
+index 40e5056..4acba76 100644
+--- a/backend/zepiris_service.py
++++ b/backend/zepiris_service.py
+@@ -113,6 +113,8 @@ class ZepirisService:
+             np.ndarray: RGB image array of shape (H, W, 3), dtype uint8
+         """
+         if isinstance(image_input, str):
++            if not image_input.strip():
++                raise ValueError("Empty image input")
+             if "," in image_input:
+                 image_input = image_input.split(",", 1)[1]
+             image_bytes = base64.b64decode(image_input)
+-- 
+2.55.0.windows.5
+

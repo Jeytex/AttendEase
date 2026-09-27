@@ -1,0 +1,35 @@
+From a873b7ea5a037239e94bae00e42e5a0a714e40cd Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:43 +0530
+Subject: [PATCH] feat(history): show verification method column in student
+ AttendanceHistory
+
+---
+ frontend/src/pages/student/AttendanceHistory.jsx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/frontend/src/pages/student/AttendanceHistory.jsx b/frontend/src/pages/student/AttendanceHistory.jsx
+index bf9aec4..2a39351 100644
+--- a/frontend/src/pages/student/AttendanceHistory.jsx
++++ b/frontend/src/pages/student/AttendanceHistory.jsx
+@@ -105,6 +105,7 @@ export function AttendanceHistory() {
+                   <th className="pb-3 pr-4">Date</th>
+                   <th className="pb-3 pr-4">Subject</th>
+                   <th className="pb-3 pr-4">Code</th>
++                  <th className="pb-3 pr-4">Method</th>
+                   <th className="pb-3 pr-4">Status</th>
+                   <th className="pb-3 text-right">Timestamp</th>
+                 </tr>
+@@ -115,6 +116,9 @@ export function AttendanceHistory() {
+                     <td className="py-3 pr-4 font-mono text-neutral-500">{row.date}</td>
+                     <td className="py-3 pr-4 font-bold text-black">{row.subject}</td>
+                     <td className="py-3 pr-4 font-mono text-neutral-500">{row.subject_code}</td>
++                    <td className="py-3 pr-4 font-mono text-[11px] text-neutral-600">
++                      {row.method === 'MANUAL' ? '👤 Manual' : '✓ QR + Face'}
++                    </td>
+                     <td className="py-3 pr-4">
+                       <span className="inline-block px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold">
+                         ✓ Present
+-- 
+2.55.0.windows.5
+

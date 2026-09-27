@@ -1,0 +1,85 @@
+From 9f7dcb8994a1595efb0fc65909b88c6fa3c48541 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:43 +0530
+Subject: [PATCH] a11y(modals): allow closing faculty management modals with
+ Escape key
+
+---
+ frontend/src/pages/faculty/FacultyPage.jsx  | 12 ++++++++++++
+ frontend/src/pages/faculty/StudentsPage.jsx | 13 +++++++++++++
+ frontend/src/pages/faculty/SubjectsPage.jsx | 12 ++++++++++++
+ 3 files changed, 37 insertions(+)
+
+diff --git a/frontend/src/pages/faculty/FacultyPage.jsx b/frontend/src/pages/faculty/FacultyPage.jsx
+index 3ffc034..3fd3ed5 100644
+--- a/frontend/src/pages/faculty/FacultyPage.jsx
++++ b/frontend/src/pages/faculty/FacultyPage.jsx
+@@ -58,6 +58,18 @@ export function FacultyPage() {
+     };
+   }, []);
+ 
++  useEffect(() => {
++    if (!isCreateOpen && !editingFaculty) return;
++    const handleKeyDown = (e) => {
++      if (e.key === 'Escape') {
++        setIsCreateOpen(false);
++        setEditingFaculty(null);
++      }
++    };
++    window.addEventListener('keydown', handleKeyDown);
++    return () => window.removeEventListener('keydown', handleKeyDown);
++  }, [isCreateOpen, editingFaculty]);
++
+   const showToast = (msg) => {
+     setToastMessage(msg);
+     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+diff --git a/frontend/src/pages/faculty/StudentsPage.jsx b/frontend/src/pages/faculty/StudentsPage.jsx
+index 75947b6..96e8f73 100644
+--- a/frontend/src/pages/faculty/StudentsPage.jsx
++++ b/frontend/src/pages/faculty/StudentsPage.jsx
+@@ -57,6 +57,19 @@ export function StudentsPage() {
+     };
+   }, []);
+ 
++  useEffect(() => {
++    if (!isCreateOpen && !editingStudent && !viewingStudent) return;
++    const handleKeyDown = (e) => {
++      if (e.key === 'Escape') {
++        setIsCreateOpen(false);
++        setEditingStudent(null);
++        setViewingStudent(null);
++      }
++    };
++    window.addEventListener('keydown', handleKeyDown);
++    return () => window.removeEventListener('keydown', handleKeyDown);
++  }, [isCreateOpen, editingStudent, viewingStudent]);
++
+   const showToast = (msg) => {
+     setToastMessage(msg);
+     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+diff --git a/frontend/src/pages/faculty/SubjectsPage.jsx b/frontend/src/pages/faculty/SubjectsPage.jsx
+index c5fa433..6398afd 100644
+--- a/frontend/src/pages/faculty/SubjectsPage.jsx
++++ b/frontend/src/pages/faculty/SubjectsPage.jsx
+@@ -44,6 +44,18 @@ export function SubjectsPage() {
+     };
+   }, [loadData]);
+ 
++  useEffect(() => {
++    if (!isCreateOpen && !editingSubject) return;
++    const handleKeyDown = (e) => {
++      if (e.key === 'Escape') {
++        setIsCreateOpen(false);
++        setEditingSubject(null);
++      }
++    };
++    window.addEventListener('keydown', handleKeyDown);
++    return () => window.removeEventListener('keydown', handleKeyDown);
++  }, [isCreateOpen, editingSubject]);
++
+   const showToast = (msg) => {
+     setToastMessage(msg);
+     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+-- 
+2.55.0.windows.5
+

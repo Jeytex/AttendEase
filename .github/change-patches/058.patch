@@ -1,0 +1,26 @@
+From 9c37f5e503bc7e35db93e6e08b9d91e920a77b2b Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:39 +0530
+Subject: [PATCH] build(backend): remove unused qrcode package from
+ requirements.txt
+
+---
+ backend/requirements.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/backend/requirements.txt b/backend/requirements.txt
+index f081701..f91180a 100644
+--- a/backend/requirements.txt
++++ b/backend/requirements.txt
+@@ -3,7 +3,6 @@ Flask-SQLAlchemy
+ Flask-CORS
+ Flask-JWT-Extended
+ Werkzeug
+-qrcode
+ Pillow
+ numpy
+ pytest
+\ No newline at end of file
+-- 
+2.55.0.windows.5
+

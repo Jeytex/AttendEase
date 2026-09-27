@@ -1,0 +1,68 @@
+From 0e63aeac8e87ad00396af7a6482eee91451f0bd5 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:33 +0530
+Subject: [PATCH] refactor(auth): extract _issue_user_token helper for JWT
+ creation
+
+---
+ backend/auth.py | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
+
+diff --git a/backend/auth.py b/backend/auth.py
+index e300267..97c254c 100644
+--- a/backend/auth.py
++++ b/backend/auth.py
+@@ -11,6 +11,18 @@ from models import User, Student, FacultyProfile, now_utc
+ auth = Blueprint("auth", __name__)
+ 
+ 
++def _issue_user_token(user: User) -> str:
++    """Issue a signed JWT access token with role, name, and email claims."""
++    return create_access_token(
++        identity=str(user.id),
++        additional_claims={
++            "role": user.role,
++            "name": user.name,
++            "email": user.email,
++        }
++    )
++
++
+ @auth.route("/register", methods=["POST"])
+ def register():
+     data = request.get_json() or {}
+@@ -112,14 +124,7 @@ def register():
+     db.session.commit()
+ 
+     # Issue JWT access token
+-    access_token = create_access_token(
+-        identity=str(user.id),
+-        additional_claims={
+-            "role": user.role,
+-            "name": user.name,
+-            "email": user.email,
+-        }
+-    )
++    access_token = _issue_user_token(user)
+ 
+     return jsonify({
+         "message": "Account created successfully",
+@@ -170,14 +175,7 @@ def login():
+     if not user or not check_password_hash(user.password, password):
+         return jsonify({"error": "Invalid credentials. Please check your roll number/email and password."}), 401
+ 
+-    access_token = create_access_token(
+-        identity=str(user.id),
+-        additional_claims={
+-            "role": user.role,
+-            "name": user.name,
+-            "email": user.email,
+-        }
+-    )
++    access_token = _issue_user_token(user)
+ 
+     roll_number = None
+     faculty_id_code = None
+-- 
+2.55.0.windows.5
+

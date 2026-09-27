@@ -1,0 +1,32 @@
+From c051e4008d83bec57c0529400dd5b71859c617ee Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:35 +0530
+Subject: [PATCH] fix(subjects): return 409 if deleting subject with existing
+ class sessions
+
+---
+ backend/attendance.py | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 8ffc1da..f82be5b 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -1161,9 +1161,11 @@ def delete_subject(subject_id):
+     if not subject:
+         return jsonify({"error": "Subject not found"}), 404
+ 
+-    active_sess = ClassSession.query.filter_by(subject_id=subject.id, active=True).first()
+-    if active_sess:
+-        return jsonify({"error": "Cannot delete a subject with an active attendance session"}), 400
++    existing_sess = ClassSession.query.filter_by(subject_id=subject.id).first()
++    if existing_sess:
++        if existing_sess.active:
++            return jsonify({"error": "Cannot delete a subject with an active attendance session"}), 400
++        return jsonify({"error": "Cannot delete a subject with existing attendance session history"}), 400
+ 
+     # Delete timetable slots associated with this subject
+     TimetableSlot.query.filter_by(subject_id=subject.id).delete()
+-- 
+2.55.0.windows.5
+

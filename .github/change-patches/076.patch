@@ -1,0 +1,42 @@
+From 5fd4dbf583378efcec3d77ff2a49a8e58b6f5b86 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:41 +0530
+Subject: [PATCH] fix(ui): guard max<=0 and add progressbar ARIA attributes in
+ ProgressBar
+
+---
+ frontend/src/components/ui/ProgressBar.jsx | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/frontend/src/components/ui/ProgressBar.jsx b/frontend/src/components/ui/ProgressBar.jsx
+index c816398..11a2d5f 100644
+--- a/frontend/src/components/ui/ProgressBar.jsx
++++ b/frontend/src/components/ui/ProgressBar.jsx
+@@ -1,7 +1,8 @@
+ import React from 'react';
+ 
+ export function ProgressBar({ value = 0, max = 100, label, dark = false, className = '' }) {
+-  const percentage = Math.min(Math.max(Math.round((value / max) * 100), 0), 100);
++  const safeMax = max > 0 ? max : 100;
++  const percentage = Math.min(Math.max(Math.round((value / safeMax) * 100), 0), 100);
+ 
+   return (
+     <div className={`w-full ${className}`}>
+@@ -11,7 +12,13 @@ export function ProgressBar({ value = 0, max = 100, label, dark = false, classNa
+           <span className={`font-bold font-mono ${dark ? 'text-white' : 'text-black'}`}>{percentage}%</span>
+         </div>
+       )}
+-      <div className={`w-full rounded-full overflow-hidden h-2 relative ${dark ? 'bg-neutral-800' : 'bg-neutral-200'}`}>
++      <div
++        role="progressbar"
++        aria-valuenow={percentage}
++        aria-valuemin={0}
++        aria-valuemax={100}
++        className={`w-full rounded-full overflow-hidden h-2 relative ${dark ? 'bg-neutral-800' : 'bg-neutral-200'}`}
++      >
+         <div
+           className={`h-full rounded-full transition-all duration-500 ease-out ${dark ? 'bg-white' : 'bg-black'}`}
+           style={{ width: `${percentage}%` }}
+-- 
+2.55.0.windows.5
+

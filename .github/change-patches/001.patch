@@ -1,0 +1,23 @@
+From c97b5d9ff24f8ee5c3f81141a8e2efbcf9c7e294 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:31 +0530
+Subject: [PATCH] docs(backend): add module docstring to database.py
+
+---
+ backend/database.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backend/database.py b/backend/database.py
+index 2e1eeb6..e6616ac 100644
+--- a/backend/database.py
++++ b/backend/database.py
+@@ -1,3 +1,5 @@
++"""Shared SQLAlchemy database instance for AttendEase Flask blueprints."""
++
+ from flask_sqlalchemy import SQLAlchemy
+ 
+ db = SQLAlchemy()
+\ No newline at end of file
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,30 @@
+From 39d2af70ace003b59957a23ecd272ac59095e9c3 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:41 +0530
+Subject: [PATCH] feat(attendance): support optional timestamp prop in
+ AttendanceSuccess
+
+---
+ frontend/src/components/attendance/AttendanceSuccess.jsx | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/frontend/src/components/attendance/AttendanceSuccess.jsx b/frontend/src/components/attendance/AttendanceSuccess.jsx
+index 51817b2..f7eea87 100644
+--- a/frontend/src/components/attendance/AttendanceSuccess.jsx
++++ b/frontend/src/components/attendance/AttendanceSuccess.jsx
+@@ -1,9 +1,9 @@
+ import React from 'react';
+ import { Button } from '../ui/Button';
+ 
+-export function AttendanceSuccess({ subject = 'Data Structures', onBackToDashboard }) {
+-  const now = new Date();
+-  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
++export function AttendanceSuccess({ subject = 'Data Structures', timestamp, onBackToDashboard }) {
++  const displayDate = timestamp ? new Date(timestamp) : new Date();
++  const timeStr = displayDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+ 
+   return (
+     <div className="max-w-md mx-auto text-center py-8">
+-- 
+2.55.0.windows.5
+

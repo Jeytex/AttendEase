@@ -1,0 +1,25 @@
+From e540677f74f48f4a52d83ca7b3127df75047b607 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:36 +0530
+Subject: [PATCH] docs(attendance): add docstring to manual_mark_attendance
+ endpoint
+
+---
+ backend/attendance.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 1b1cae1..f8c29b6 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -244,6 +244,7 @@ def end_session(session_id):
+ @attendance.route("/sessions/<int:session_id>/manual-mark", methods=["POST"])
+ @jwt_required()
+ def manual_mark_attendance(session_id):
++    """Manually mark a student present for an active session with faculty audit metadata."""
+     if not faculty_only():
+         return jsonify({"error": "Faculty access required"}), 403
+ 
+-- 
+2.55.0.windows.5
+

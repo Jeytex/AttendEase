@@ -1,0 +1,24 @@
+From bef7de22303fad9f541d8439278eb3575ea01593 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:34 +0530
+Subject: [PATCH] chore(attendance): remove unused FaceProfile import
+
+---
+ backend/attendance.py | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index c5cfeb8..4c0a2cb 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -13,7 +13,6 @@ from models import (
+     Attendance,
+     Student,
+     TimetableSlot,
+-    FaceProfile,
+     now_utc,
+ )
+ from sqlalchemy.exc import IntegrityError
+-- 
+2.55.0.windows.5
+

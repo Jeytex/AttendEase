@@ -1,0 +1,41 @@
+From 65c3422c5c19adf838b60940d2cb78cde50b6323 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:32 +0530
+Subject: [PATCH] refactor(qr): import shared now_utc helper from models
+
+---
+ backend/qr.py | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/backend/qr.py b/backend/qr.py
+index b47f6cd..b03ef85 100644
+--- a/backend/qr.py
++++ b/backend/qr.py
+@@ -1,11 +1,11 @@
+-from datetime import datetime, timedelta, timezone
++from datetime import timedelta
+ import secrets
+ 
+ from flask import Blueprint, jsonify
+ from flask_jwt_extended import jwt_required
+ 
+ from database import db
+-from models import ClassSession
++from models import ClassSession, now_utc
+ 
+ 
+ qr = Blueprint("qr", __name__)
+@@ -13,10 +13,6 @@ qr = Blueprint("qr", __name__)
+ QR_DEFAULT_LIFETIME_SECONDS = 5
+ 
+ 
+-def now_utc():
+-    return datetime.now(timezone.utc).replace(tzinfo=None)
+-
+-
+ @qr.route("/sessions/<int:session_id>/qr", methods=["GET"])
+ @jwt_required()
+ def get_current_qr(session_id):
+-- 
+2.55.0.windows.5
+

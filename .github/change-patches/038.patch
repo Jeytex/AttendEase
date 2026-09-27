@@ -1,0 +1,26 @@
+From 53efbcc1e2d0099d2b0da910aa6f9751877120f6 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:36 +0530
+Subject: [PATCH] fix(attendance): standardize status casing to Present in
+ get_session_records
+
+---
+ backend/attendance.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index afdac81..f8b914f 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -370,7 +370,7 @@ def get_session_records(session_id):
+                 "student_id": record.student.id,
+                 "name": record.student.user.name,
+                 "roll_number": record.student.roll_number,
+-                "status": "present",
++                "status": "Present",
+                 "method": record.method if getattr(record, "method", None) else "QR_FACE",
+                 "reason": record.reason if getattr(record, "reason", None) else None,
+                 "confidence_score": record.confidence_score if getattr(record, "confidence_score", None) else None,
+-- 
+2.55.0.windows.5
+

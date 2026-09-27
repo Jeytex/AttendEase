@@ -1,0 +1,25 @@
+From 6d50c8a5f258a1f56bd1a3999bbfeb79684b9085 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:37 +0530
+Subject: [PATCH] fix(zepiris): clamp cosine_similarity result to [-1.0, 1.0]
+
+---
+ backend/zepiris_service.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backend/zepiris_service.py b/backend/zepiris_service.py
+index 643b9ea..4545ecd 100644
+--- a/backend/zepiris_service.py
++++ b/backend/zepiris_service.py
+@@ -237,7 +237,7 @@ class ZepirisService:
+         norm_b = float(np.linalg.norm(b))
+         if norm_a == 0.0 or norm_b == 0.0:
+             return 0.0
+-        return dot / (norm_a * norm_b)
++        return float(np.clip(dot / (norm_a * norm_b), -1.0, 1.0))
+ 
+     def verify_face_match(
+         self,
+-- 
+2.55.0.windows.5
+

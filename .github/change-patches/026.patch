@@ -1,0 +1,26 @@
+From 8d0fc432385b9eba2c7b6ac1fc3306de9a864af0 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:34 +0530
+Subject: [PATCH] fix(attendance): normalize subject code to uppercase on
+ creation
+
+---
+ backend/attendance.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 4c0a2cb..96af512 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -52,7 +52,7 @@ def create_subject():
+ 
+     data = request.get_json() or {}
+     name = data.get("name", "").strip()
+-    code = data.get("code", "").strip()
++    code = data.get("code", "").strip().upper()
+ 
+     if not name or not code:
+         return jsonify({"error": "Subject name and code are required"}), 400
+-- 
+2.55.0.windows.5
+

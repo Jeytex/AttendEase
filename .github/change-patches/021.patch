@@ -1,0 +1,31 @@
+From 56bec7b57e9512fe358d223becd9222be98d1ee8 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:34 +0530
+Subject: [PATCH] security(attendance): use secrets.compare_digest for QR token
+ comparison
+
+---
+ backend/attendance.py | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 69ba2a9..2a88261 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -514,10 +514,11 @@ def mark_attendance():
+     ):
+         return jsonify({"error": "QR code has expired. Please scan the current QR code."}), 400
+ 
+-    # 4. Compare submitted token with current active session token
+-    if str(token).strip() != str(session.qr_token).strip():
++    # 4. Compare submitted token with current active session token using constant-time digest check
++    if not secrets.compare_digest(str(token).strip(), str(session.qr_token).strip()):
+         return jsonify({"error": "Invalid QR token for this session"}), 400
+ 
++
+     # 5. Prevent duplicate attendance for the same session
+     existing_attendance = Attendance.query.filter_by(
+         student_id=student.id,
+-- 
+2.55.0.windows.5
+

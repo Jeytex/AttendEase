@@ -1,0 +1,27 @@
+From 524a38bb066e612b71616bb2603a36fcfd48f345 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:38 +0530
+Subject: [PATCH] build(backend): add explicit numpy and Werkzeug entries to
+ requirements.txt
+
+---
+ backend/requirements.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backend/requirements.txt b/backend/requirements.txt
+index 28326d5..f081701 100644
+--- a/backend/requirements.txt
++++ b/backend/requirements.txt
+@@ -2,6 +2,8 @@ Flask
+ Flask-SQLAlchemy
+ Flask-CORS
+ Flask-JWT-Extended
++Werkzeug
+ qrcode
+ Pillow
++numpy
+ pytest
+\ No newline at end of file
+-- 
+2.55.0.windows.5
+

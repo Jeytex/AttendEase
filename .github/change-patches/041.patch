@@ -1,0 +1,22 @@
+From c98869aab18b5a730963d28d9a58c1aef6e8f668 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:36 +0530
+Subject: [PATCH] docs(face): add module docstring to face_routes.py
+
+---
+ backend/face_routes.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backend/face_routes.py b/backend/face_routes.py
+index 8f9689d..bb788ee 100644
+--- a/backend/face_routes.py
++++ b/backend/face_routes.py
+@@ -1,3 +1,5 @@
++"""Biometric face enrollment and status routes for student accounts."""
++
+ import secrets
+ from flask import Blueprint, request, jsonify
+ from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+-- 
+2.55.0.windows.5
+

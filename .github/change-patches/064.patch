@@ -1,0 +1,25 @@
+From db561df0915e7182aa1d52044cac992abe265fc7 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:39 +0530
+Subject: [PATCH] fix(api): strip trailing slashes from VITE_API_URL in
+ config.js
+
+---
+ frontend/src/api/config.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/frontend/src/api/config.js b/frontend/src/api/config.js
+index b1ec8d1..05e259a 100644
+--- a/frontend/src/api/config.js
++++ b/frontend/src/api/config.js
+@@ -1,6 +1,6 @@
+ const getDefaultApiUrl = () => {
+   if (import.meta.env.VITE_API_URL !== undefined) {
+-    return import.meta.env.VITE_API_URL;
++    return String(import.meta.env.VITE_API_URL).replace(/\/+$/, "");
+   }
+   return "";
+ };
+-- 
+2.55.0.windows.5
+

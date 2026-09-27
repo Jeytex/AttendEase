@@ -1,0 +1,24 @@
+From 5c4d03640d84a2dd59d0808bde1a17824ef09997 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:34 +0530
+Subject: [PATCH] docs(qr): add docstring to get_current_qr endpoint
+
+---
+ backend/qr.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/qr.py b/backend/qr.py
+index b03ef85..6ba0963 100644
+--- a/backend/qr.py
++++ b/backend/qr.py
+@@ -16,6 +16,7 @@ QR_DEFAULT_LIFETIME_SECONDS = 5
+ @qr.route("/sessions/<int:session_id>/qr", methods=["GET"])
+ @jwt_required()
+ def get_current_qr(session_id):
++    """Return the active QR token for a session, rotating server-side when expired."""
+     session = db.session.get(ClassSession, session_id)
+ 
+     if not session:
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,26 @@
+From 18dd4ff768b682fec26063b257ca4b21556333c2 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:35 +0530
+Subject: [PATCH] fix(timetable): validate day_of_week in create_timetable_slot
+
+---
+ backend/attendance.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 46311c3..03a7f71 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -1254,6 +1254,9 @@ def create_timetable_slot():
+     if not day or not start_time or not end_time or not subject_id:
+         return jsonify({"error": "Day, start time, end time, and subject are required"}), 400
+ 
++    if day not in DAYS_ORDER:
++        return jsonify({"error": "Invalid day_of_week. Must be Monday through Sunday."}), 400
++
+     try:
+         subject_id = int(subject_id)
+     except (ValueError, TypeError):
+-- 
+2.55.0.windows.5
+

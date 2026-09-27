@@ -1,0 +1,26 @@
+From 62033de08e5b15a886c028d4aa1ed9beb425083e Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:32 +0530
+Subject: [PATCH] chore(models): add __repr__ to Subject model
+
+---
+ backend/models.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/backend/models.py b/backend/models.py
+index 0a1a33f..10bba39 100644
+--- a/backend/models.py
++++ b/backend/models.py
+@@ -81,6 +81,9 @@ class Subject(db.Model):
+     name = db.Column(db.String(100), nullable=False)
+     code = db.Column(db.String(50), unique=True, nullable=False)
+ 
++    def __repr__(self):
++        return f"<Subject {self.code}: {self.name}>"
++
+ 
+ class ClassSession(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+-- 
+2.55.0.windows.5
+

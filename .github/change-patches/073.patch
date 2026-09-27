@@ -1,0 +1,26 @@
+From a19aa934b355afebb9ea3d29da284709919d6ca3 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:41 +0530
+Subject: [PATCH] perf(hooks): use passive mousemove listener in
+ useMousePosition
+
+---
+ frontend/src/hooks/useMousePosition.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/frontend/src/hooks/useMousePosition.js b/frontend/src/hooks/useMousePosition.js
+index ee50c53..de1c6f1 100644
+--- a/frontend/src/hooks/useMousePosition.js
++++ b/frontend/src/hooks/useMousePosition.js
+@@ -10,7 +10,7 @@ export function useMousePosition() {
+       document.body.style.setProperty('--mouse-y', `${event.clientY}px`);
+     };
+ 
+-    window.addEventListener('mousemove', handleMouseMove);
++    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+     return () => {
+       window.removeEventListener('mousemove', handleMouseMove);
+     };
+-- 
+2.55.0.windows.5
+

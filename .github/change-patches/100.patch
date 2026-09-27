@@ -1,0 +1,26 @@
+From 50f99ec4398a825c0beec1a3262fdc5a66d73c55 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:44 +0530
+Subject: [PATCH] chore(git): ignore test coverage artifacts in .gitignore
+
+---
+ .gitignore | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/.gitignore b/.gitignore
+index 5592446..d1eb571 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -34,6 +34,9 @@ zepiris-main/__pycache__/
+ .pytest_cache/
+ .ruff_cache/
+ .mypy_cache/
++.coverage
++htmlcov/
++coverage/
+ *.egg-info/
+ .installed.cfg
+ *.egg
+-- 
+2.55.0.windows.5
+

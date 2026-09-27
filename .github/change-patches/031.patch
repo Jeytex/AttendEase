@@ -1,0 +1,25 @@
+From a27cf5f3c168ac353da4f291bfaa2564696483d5 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:35 +0530
+Subject: [PATCH] fix(timetable): validate day_of_week in update_timetable_slot
+
+---
+ backend/attendance.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 03a7f71..8ffc1da 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -1306,6 +1306,8 @@ def update_timetable_slot(slot_id):
+     subject_id = data.get("subject_id")
+ 
+     if day:
++        if day not in DAYS_ORDER:
++            return jsonify({"error": "Invalid day_of_week. Must be Monday through Sunday."}), 400
+         slot.day_of_week = day
+     if start_time:
+         slot.start_time = start_time
+-- 
+2.55.0.windows.5
+

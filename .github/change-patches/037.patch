@@ -1,0 +1,25 @@
+From 857f5acf1f639821528839f8750ac78dcdf050a6 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:36 +0530
+Subject: [PATCH] feat(dashboard): include qr_lifetime_seconds in student
+ dashboard active sessions
+
+---
+ backend/attendance.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index f8c29b6..afdac81 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -1437,6 +1437,7 @@ def get_student_dashboard():
+             "subject": s.subject.name if s.subject else "Class Session",
+             "subject_code": s.subject.code if s.subject else "—",
+             "faculty": s.faculty.name if s.faculty else "Faculty",
++            "qr_lifetime_seconds": s.qr_lifetime_seconds if getattr(s, "qr_lifetime_seconds", None) else 5,
+             "started_at": s.created_at.strftime("%I:%M %p") if s.created_at else "—"
+         })
+ 
+-- 
+2.55.0.windows.5
+

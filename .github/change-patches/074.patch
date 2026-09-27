@@ -1,0 +1,32 @@
+From 1848e800ba085c235ab6907ab24032b9a76b2b8c Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:41 +0530
+Subject: [PATCH] fix(ui): default Button type prop to button
+
+---
+ frontend/src/components/ui/Button.jsx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/frontend/src/components/ui/Button.jsx b/frontend/src/components/ui/Button.jsx
+index 7d93cf5..64e9ee0 100644
+--- a/frontend/src/components/ui/Button.jsx
++++ b/frontend/src/components/ui/Button.jsx
+@@ -3,6 +3,7 @@ import { useMagneticEffect } from '../../hooks/useMagneticEffect';
+ 
+ export function Button({
+   children,
++  type = 'button',
+   variant = 'primary', // 'primary' | 'white' | 'dark-glass' | 'secondary' | 'danger'
+   size = 'md', // 'sm' | 'md' | 'lg'
+   className = '',
+@@ -43,6 +44,7 @@ export function Button({
+   return (
+     <button
+       ref={buttonRef}
++      type={type}
+       style={magneticStyle}
+       onMouseMove={handleMouseMove}
+       onMouseLeave={handleMouseLeave}
+-- 
+2.55.0.windows.5
+

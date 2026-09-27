@@ -1,0 +1,26 @@
+From 9cdaa552e65fd5a9280507467eafe30d6e65ed30 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:38 +0530
+Subject: [PATCH] chore(tests): remove unused TimetableSlot import in
+ test_suite.py
+
+---
+ backend/test_suite.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backend/test_suite.py b/backend/test_suite.py
+index 88df974..4e90bee 100644
+--- a/backend/test_suite.py
++++ b/backend/test_suite.py
+@@ -17,7 +17,7 @@ from PIL import Image
+ 
+ from app import create_app
+ from database import db
+-from models import User, Student, FacultyProfile, FaceProfile, Subject, ClassSession, Attendance, TimetableSlot
++from models import User, Student, FacultyProfile, FaceProfile, Subject, ClassSession, Attendance
+ from zepiris_service import zepiris_service
+ 
+ 
+-- 
+2.55.0.windows.5
+

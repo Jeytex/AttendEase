@@ -1,0 +1,28 @@
+From 257cc049713cddb4b2e11b01e4f77b64ae349bf3 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:42 +0530
+Subject: [PATCH] fix(register): trim name and normalize email before
+ submitting
+
+---
+ frontend/src/pages/Register.jsx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/frontend/src/pages/Register.jsx b/frontend/src/pages/Register.jsx
+index d9f7a68..2a9bdc1 100644
+--- a/frontend/src/pages/Register.jsx
++++ b/frontend/src/pages/Register.jsx
+@@ -38,8 +38,8 @@ export function Register() {
+ 
+     try {
+       const payload = {
+-        name,
+-        email,
++        name: name.trim(),
++        email: email.trim().toLowerCase(),
+         password,
+         confirm_password: confirmPassword,
+         role: selectedRole,
+-- 
+2.55.0.windows.5
+

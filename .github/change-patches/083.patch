@@ -1,0 +1,31 @@
+From aed67cfcce812d5efa43ff6bd0482392a9b367e3 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:42 +0530
+Subject: [PATCH] ui(login): clarify identifier input label and placeholder for
+ all roles
+
+---
+ frontend/src/pages/Login.jsx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/frontend/src/pages/Login.jsx b/frontend/src/pages/Login.jsx
+index 6ae1c35..98f6c97 100644
+--- a/frontend/src/pages/Login.jsx
++++ b/frontend/src/pages/Login.jsx
+@@ -56,11 +56,11 @@ export function Login() {
+         {/* Login Form */}
+         <form onSubmit={handleSignIn} className="space-y-4">
+           <Input
+-            label="ROLL NUMBER"
++            label="ROLL NUMBER / FACULTY ID / EMAIL"
+             type="text"
+             value={rollNumber}
+             onChange={(e) => setRollNumber(e.target.value)}
+-            placeholder="Enter roll number"
++            placeholder="Enter roll number, faculty ID, or email"
+             variant="dark"
+             required
+             autoFocus
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,39 @@
+From 8d52374f22101754b737dbc75bdaf711e412b61f Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:34 +0530
+Subject: [PATCH] refactor(attendance): extract ALLOWED_QR_LIFETIMES constant
+
+---
+ backend/attendance.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 2a88261..af7377a 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -23,6 +23,8 @@ from zepiris_service import zepiris_service
+ attendance = Blueprint("attendance", __name__)
+ faculty_bp = Blueprint("faculty", __name__)
+ 
++ALLOWED_QR_LIFETIMES = (3, 5, 10, 15)
++
+ 
+ def faculty_only():
+     claims = get_jwt()
+@@ -165,11 +167,12 @@ def create_session():
+     qr_lifetime = data.get("qr_lifetime_seconds") or data.get("qr_interval") or 5
+     try:
+         qr_lifetime = int(qr_lifetime)
+-        if qr_lifetime not in [3, 5, 10, 15]:
++        if qr_lifetime not in ALLOWED_QR_LIFETIMES:
+             qr_lifetime = 5
+     except (ValueError, TypeError):
+         qr_lifetime = 5
+ 
++
+     token = secrets.token_urlsafe(24)
+     current_time = now_utc()
+     expires_at = current_time + timedelta(seconds=qr_lifetime)
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,38 @@
+From 1bb64e945042b138b8a9aab584e74303334627e2 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:32 +0530
+Subject: [PATCH] fix(db): ensure sqlite migration connection closes in finally
+ block
+
+---
+ backend/app.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/backend/app.py b/backend/app.py
+index d242119..4fd40f7 100644
+--- a/backend/app.py
++++ b/backend/app.py
+@@ -46,6 +46,7 @@ def create_app():
+         db.create_all()
+ 
+         # Database column migration helper for existing SQLite databases
++        conn = None
+         try:
+             conn = sqlite3.connect(DATABASE_PATH.as_posix())
+             cursor = conn.cursor()
+@@ -92,9 +93,11 @@ def create_app():
+             cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS ix_uq_attendance_student_session ON attendance (student_id, class_session_id);")
+ 
+             conn.commit()
+-            conn.close()
+         except Exception as e:
+             print("[Migration note]:", e)
++        finally:
++            if conn is not None:
++                conn.close()
+ 
+         # Seed required subjects if empty
+         REQUIRED_SUBJECTS = [
+-- 
+2.55.0.windows.5
+

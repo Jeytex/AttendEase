@@ -1,0 +1,41 @@
+From 191a942c7b29f6fc763dd8c9c9d38c96b012d22f Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:40 +0530
+Subject: [PATCH] refactor(context): use getAuthHeaders in registerFace and
+ markAttendance
+
+---
+ frontend/src/context/AttendanceContext.jsx | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/frontend/src/context/AttendanceContext.jsx b/frontend/src/context/AttendanceContext.jsx
+index 499bc92..ea87511 100644
+--- a/frontend/src/context/AttendanceContext.jsx
++++ b/frontend/src/context/AttendanceContext.jsx
+@@ -224,10 +224,7 @@ export function AttendanceProvider({ children }) {
+ 
+     const response = await fetch(`${API_URL}/api/student/face/register`, {
+       method: 'POST',
+-      headers: {
+-        'Content-Type': 'application/json',
+-        Authorization: `Bearer ${user.access_token}`,
+-      },
++      headers: getAuthHeaders(user.access_token),
+       body: JSON.stringify({
+         image_base64: imageBase64,
+       }),
+@@ -524,10 +521,7 @@ export function AttendanceProvider({ children }) {
+ 
+     const res = await fetch(`${API_URL}/api/attendance/mark`, {
+       method: 'POST',
+-      headers: {
+-        'Content-Type': 'application/json',
+-        Authorization: `Bearer ${user.access_token}`,
+-      },
++      headers: getAuthHeaders(user.access_token),
+       body: JSON.stringify({
+         session_id: sessionId,
+         token: String(token).trim(),
+-- 
+2.55.0.windows.5
+

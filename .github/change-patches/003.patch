@@ -1,0 +1,24 @@
+From 3a2f618a7773c5a0f21f7464b96a7265ef95b893 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:32 +0530
+Subject: [PATCH] docs(models): document now_utc helper function
+
+---
+ backend/models.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/models.py b/backend/models.py
+index b419158..b7f58f5 100644
+--- a/backend/models.py
++++ b/backend/models.py
+@@ -5,6 +5,7 @@ from database import db
+ 
+ 
+ def now_utc():
++    """Return current UTC timestamp as a timezone-naive datetime for SQLite storage."""
+     return datetime.now(timezone.utc).replace(tzinfo=None)
+ 
+ 
+-- 
+2.55.0.windows.5
+

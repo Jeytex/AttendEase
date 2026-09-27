@@ -1,0 +1,27 @@
+From 32b10d92ff8f441a4e28b112dd33edb3565d8f9a Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:33 +0530
+Subject: [PATCH] config(backend): read PORT and FLASK_DEBUG from environment
+ variables
+
+---
+ backend/app.py | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/backend/app.py b/backend/app.py
+index ba108de..dc6b18a 100644
+--- a/backend/app.py
++++ b/backend/app.py
+@@ -184,4 +184,6 @@ app = create_app()
+ 
+ 
+ if __name__ == "__main__":
+-    app.run(host="0.0.0.0", port=5000, debug=True)
+\ No newline at end of file
++    port = int(os.getenv("PORT", "5000"))
++    debug_mode = os.getenv("FLASK_DEBUG", "true").lower() in ("1", "true", "yes")
++    app.run(host="0.0.0.0", port=port, debug=debug_mode)
+\ No newline at end of file
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,33 @@
+From 5dbd6a651b466ec5fb4b731275b8d50aa48e8d43 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:35 +0530
+Subject: [PATCH] feat(faculty): register faculty management routes on
+ faculty_bp
+
+---
+ backend/attendance.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index f8e41aa..46311c3 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -936,6 +936,7 @@ def delete_admin_student(student_id):
+ # ============================================================
+ 
+ @attendance.route("/admin/faculty", methods=["GET"])
++@faculty_bp.route("/faculty", methods=["GET"])
+ @jwt_required()
+ def get_admin_faculty():
+     if not faculty_only():
+@@ -972,6 +973,7 @@ def get_admin_faculty():
+ 
+ 
+ @attendance.route("/admin/faculty", methods=["POST"])
++@faculty_bp.route("/faculty", methods=["POST"])
+ @jwt_required()
+ def create_admin_faculty():
+     if not faculty_only():
+-- 
+2.55.0.windows.5
+

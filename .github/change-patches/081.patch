@@ -1,0 +1,28 @@
+From 1f99ddedaa6457056428885dec84dd3c662cdbe0 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:42 +0530
+Subject: [PATCH] feat(monitor): display confidence score on live QR_FACE
+ check-in badges
+
+---
+ frontend/src/components/attendance/LiveAttendanceMonitor.jsx | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/frontend/src/components/attendance/LiveAttendanceMonitor.jsx b/frontend/src/components/attendance/LiveAttendanceMonitor.jsx
+index 55f637e..6efaecc 100644
+--- a/frontend/src/components/attendance/LiveAttendanceMonitor.jsx
++++ b/frontend/src/components/attendance/LiveAttendanceMonitor.jsx
+@@ -67,7 +67,9 @@ export function LiveAttendanceMonitor({ liveStudents = [], presentCount = 0, tot
+ 
+                 <div className="text-right">
+                   <span className={`text-[11px] font-bold ${isManual ? 'text-blue-800 bg-blue-50 border-blue-200' : 'text-emerald-800 bg-emerald-50 border-emerald-200'} px-2.5 py-1 rounded-lg border font-mono shadow-xs`}>
+-                    {isManual ? '👤 Manual' : '✓ QR Face'}
++                    {isManual
++                      ? '👤 Manual'
++                      : `✓ QR Face${item.confidence_score ? ` (${item.confidence_score}%)` : ''}`}
+                   </span>
+                 </div>
+               </div>
+-- 
+2.55.0.windows.5
+

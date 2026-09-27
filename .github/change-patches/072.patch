@@ -1,0 +1,43 @@
+From 4b4cd0db5118fb115fa6176ebc1b7a2a5135359c Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:40 +0530
+Subject: [PATCH] perf(hooks): update CSS variables directly in
+ useMousePosition without state re-renders
+
+---
+ frontend/src/hooks/useMousePosition.js | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/frontend/src/hooks/useMousePosition.js b/frontend/src/hooks/useMousePosition.js
+index 7da8900..ee50c53 100644
+--- a/frontend/src/hooks/useMousePosition.js
++++ b/frontend/src/hooks/useMousePosition.js
+@@ -1,17 +1,11 @@
+-import { useState, useEffect } from 'react';
++import { useEffect } from 'react';
+ 
+ export function useMousePosition() {
+-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+-
+   useEffect(() => {
+     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+     if (mediaQuery.matches) return;
+ 
+     const handleMouseMove = (event) => {
+-      setMousePosition({
+-        x: event.clientX,
+-        y: event.clientY,
+-      });
+       document.body.style.setProperty('--mouse-x', `${event.clientX}px`);
+       document.body.style.setProperty('--mouse-y', `${event.clientY}px`);
+     };
+@@ -21,6 +15,4 @@ export function useMousePosition() {
+       window.removeEventListener('mousemove', handleMouseMove);
+     };
+   }, []);
+-
+-  return mousePosition;
+ }
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,28 @@
+From 25c194160142dd9a3778d64972f54faa2b2b9d47 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:42 +0530
+Subject: [PATCH] fix(scanner): guard QRScanner transition timeouts with
+ isMounted check
+
+---
+ frontend/src/components/attendance/QRScanner.jsx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/frontend/src/components/attendance/QRScanner.jsx b/frontend/src/components/attendance/QRScanner.jsx
+index 1958012..4ef779e 100644
+--- a/frontend/src/components/attendance/QRScanner.jsx
++++ b/frontend/src/components/attendance/QRScanner.jsx
+@@ -78,8 +78,10 @@ export function QRScanner({ onScanSuccess, isSubmitting = false, externalError =
+               await stopScanner();
+ 
+               setTimeout(() => {
++                if (!isMounted) return;
+                 setScanState('verified');
+                 setTimeout(() => {
++                  if (!isMounted) return;
+                   if (onScanSuccess) {
+                     onScanSuccess(parsed);
+                   }
+-- 
+2.55.0.windows.5
+

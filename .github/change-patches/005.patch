@@ -1,0 +1,26 @@
+From 8bab9a3940b2f5707813b797aef04dd3d07af33d Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:32 +0530
+Subject: [PATCH] chore(models): add __repr__ to FacultyProfile model
+
+---
+ backend/models.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/backend/models.py b/backend/models.py
+index 8fdf6ff..0a1a33f 100644
+--- a/backend/models.py
++++ b/backend/models.py
+@@ -54,6 +54,9 @@ class FacultyProfile(db.Model):
+ 
+     user = db.relationship("User", backref=db.backref("faculty_profile", uselist=False))
+ 
++    def __repr__(self):
++        return f"<FacultyProfile {self.faculty_id_code}>"
++
+ 
+ class FaceProfile(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+-- 
+2.55.0.windows.5
+

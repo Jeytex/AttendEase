@@ -1,0 +1,25 @@
+From 48439506c9e13e2c9cc9671ecfcd209968f05665 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:33 +0530
+Subject: [PATCH] feat(api): add /api/health route alias on health check
+ endpoint
+
+---
+ backend/app.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/app.py b/backend/app.py
+index 4fd40f7..ba108de 100644
+--- a/backend/app.py
++++ b/backend/app.py
+@@ -169,6 +169,7 @@ def create_app():
+             db.session.commit()
+ 
+     @app.route("/")
++    @app.route("/api/health")
+     def home():
+         return jsonify({
+             "message": "AttendEase backend is running with Zepiris Facial Recognition",
+-- 
+2.55.0.windows.5
+

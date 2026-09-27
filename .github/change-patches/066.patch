@@ -1,0 +1,31 @@
+From 28b9d676adeb59d7d7146d55fdbfff6ae7c65646 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:40 +0530
+Subject: [PATCH] feat(camera): add getActiveCount helper to cameraManager
+
+---
+ frontend/src/utils/cameraManager.js | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/frontend/src/utils/cameraManager.js b/frontend/src/utils/cameraManager.js
+index a04228f..55f7544 100644
+--- a/frontend/src/utils/cameraManager.js
++++ b/frontend/src/utils/cameraManager.js
+@@ -60,6 +60,14 @@ export const cameraManager = {
+     activeStreams.delete(stream);
+   },
+ 
++  /**
++   * Return the number of currently tracked active MediaStreams
++   * @returns {number}
++   */
++  getActiveCount() {
++    return activeStreams.size;
++  },
++
+   /**
+    * Stop ALL active camera streams across the entire application
+    * Also searches the DOM for any HTML5 <video> elements with active srcObject
+-- 
+2.55.0.windows.5
+

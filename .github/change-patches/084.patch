@@ -1,0 +1,46 @@
+From 6601367ffb9bc93cfa7724d464a17c927a5ea0cc Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:42 +0530
+Subject: [PATCH] feat(login): add link to registration page on Login screen
+
+---
+ frontend/src/pages/Login.jsx | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/frontend/src/pages/Login.jsx b/frontend/src/pages/Login.jsx
+index 98f6c97..b1d4b65 100644
+--- a/frontend/src/pages/Login.jsx
++++ b/frontend/src/pages/Login.jsx
+@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
+ import { Input } from '../components/ui/Input';
+ 
+ export function Login() {
+-  const { login } = useAttendance();
++  const { login, navigate } = useAttendance();
+   const [rollNumber, setRollNumber] = useState('');
+   const [password, setPassword] = useState('');
+   const [isLoading, setIsLoading] = useState(false);
+@@ -87,6 +87,20 @@ export function Login() {
+             </Button>
+           </div>
+         </form>
++
++        {/* Switch to Register */}
++        <div className="mt-6 pt-5 border-t border-white/10 text-center">
++          <p className="text-xs text-neutral-400 font-medium">
++            New to AttendEase?{' '}
++            <button
++              type="button"
++              onClick={() => navigate('/register')}
++              className="text-white font-bold hover:underline cursor-pointer ml-1"
++            >
++              Create Account
++            </button>
++          </p>
++        </div>
+       </div>
+     </div>
+   );
+-- 
+2.55.0.windows.5
+

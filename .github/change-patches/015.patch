@@ -1,0 +1,26 @@
+From 19b255e4be68bf504adc6e157cd049cd48b6ff6b Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:33 +0530
+Subject: [PATCH] fix(auth): validate basic email format in register endpoint
+
+---
+ backend/auth.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/backend/auth.py b/backend/auth.py
+index 8e65681..e300267 100644
+--- a/backend/auth.py
++++ b/backend/auth.py
+@@ -24,6 +24,9 @@ def register():
+     if not name or not email or not password or not role:
+         return jsonify({"error": "Name, email, password, and role are required"}), 400
+ 
++    if "@" not in email or "." not in email.split("@")[-1]:
++        return jsonify({"error": "Please provide a valid email address"}), 400
++
+     if role not in ["student", "faculty"]:
+         return jsonify({"error": "Role must be 'student' or 'faculty'"}), 400
+ 
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,26 @@
+From 42ce4de3b8014a4b3201b7c544febcba3a730bc5 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:39 +0530
+Subject: [PATCH] build(frontend): remove unused react-router-dom dependency
+
+---
+ frontend/package.json | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/frontend/package.json b/frontend/package.json
+index 0732111..29ed80f 100644
+--- a/frontend/package.json
++++ b/frontend/package.json
+@@ -13,8 +13,7 @@
+     "html5-qrcode": "^2.3.8",
+     "qrcode.react": "^4.2.0",
+     "react": "^19.2.8",
+-    "react-dom": "^19.2.8",
+-    "react-router-dom": "^7.18.2"
++    "react-dom": "^19.2.8"
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-- 
+2.55.0.windows.5
+

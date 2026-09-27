@@ -1,0 +1,26 @@
+From 9a93d3290ace3b0efc58208bd6244eb82c712b3f Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:32 +0530
+Subject: [PATCH] chore(models): add __repr__ to ClassSession model
+
+---
+ backend/models.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/backend/models.py b/backend/models.py
+index 10bba39..673a0c1 100644
+--- a/backend/models.py
++++ b/backend/models.py
+@@ -99,6 +99,9 @@ class ClassSession(db.Model):
+     subject = db.relationship("Subject")
+     faculty = db.relationship("User")
+ 
++    def __repr__(self):
++        return f"<ClassSession id={self.id} active={self.active}>"
++
+ 
+ class Attendance(db.Model):
+     __table_args__ = (
+-- 
+2.55.0.windows.5
+

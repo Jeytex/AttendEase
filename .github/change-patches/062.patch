@@ -1,0 +1,27 @@
+From 9a78e30fe707663094aaf768bea8f5aaba1a81c1 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:39 +0530
+Subject: [PATCH] chore(frontend): set package name to attendease-frontend and
+ version to 1.0.0
+
+---
+ frontend/package.json | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/frontend/package.json b/frontend/package.json
+index 29ed80f..dced1bf 100644
+--- a/frontend/package.json
++++ b/frontend/package.json
+@@ -1,7 +1,7 @@
+ {
+-  "name": "frontend",
++  "name": "attendease-frontend",
+   "private": true,
+-  "version": "0.0.0",
++  "version": "1.0.0",
+   "type": "module",
+   "scripts": {
+     "dev": "vite",
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,26 @@
+From ed008f769f05fffac0ea418c305558287f9de7b5 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:41 +0530
+Subject: [PATCH] fix(navbar): add page title mapping for
+ /student/register-face route
+
+---
+ frontend/src/components/layout/Navbar.jsx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/frontend/src/components/layout/Navbar.jsx b/frontend/src/components/layout/Navbar.jsx
+index 6c7f1de..faf76d1 100644
+--- a/frontend/src/components/layout/Navbar.jsx
++++ b/frontend/src/components/layout/Navbar.jsx
+@@ -8,6 +8,8 @@ export function Navbar({ onMobileMenuToggle }) {
+     switch (route) {
+       case '/student':
+         return 'Student Dashboard';
++      case '/student/register-face':
++        return 'Biometric Face Registration';
+       case '/student/scan':
+         return 'Mark Attendance';
+       case '/student/verify':
+-- 
+2.55.0.windows.5
+

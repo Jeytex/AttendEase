@@ -1,0 +1,25 @@
+From 581473fcaabdf6c591596df4163e91a90e236d73 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:36 +0530
+Subject: [PATCH] fix(face): use silent=True when parsing JSON in register_face
+
+---
+ backend/face_routes.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backend/face_routes.py b/backend/face_routes.py
+index bb788ee..27d87d9 100644
+--- a/backend/face_routes.py
++++ b/backend/face_routes.py
+@@ -25,7 +25,7 @@ def register_face():
+ 
+     image_data = None
+     if request.is_json:
+-        data = request.get_json() or {}
++        data = request.get_json(silent=True) or {}
+         image_data = data.get("image") or data.get("image_base64")
+     elif "file" in request.files:
+         image_data = request.files["file"].read()
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,30 @@
+From f2e6b30b3fa5910d8fd89b3be6ae746f20498755 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:38 +0530
+Subject: [PATCH] test(face): assert /api/student/face/status after face
+ enrollment
+
+---
+ backend/test_suite.py | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/backend/test_suite.py b/backend/test_suite.py
+index fec4b8c..de7663f 100644
+--- a/backend/test_suite.py
++++ b/backend/test_suite.py
+@@ -139,6 +139,12 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
+                 )
+         self.assertEqual(face_reg_res.status_code, 200)
+         self.assertEqual(face_reg_res.get_json()["status"], "active")
++        face_status_res = self.client.get(
++            "/api/student/face/status",
++            headers={"Authorization": f"Bearer {alice_token}"}
++        )
++        self.assertEqual(face_status_res.status_code, 200)
++        self.assertTrue(face_status_res.get_json()["face_registered"])
+         print("SCENARIO 3 PASSED: Face registered and linked to Alice.")
+ 
+         # ----------------------------------------------------
+-- 
+2.55.0.windows.5
+

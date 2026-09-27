@@ -1,0 +1,38 @@
+From 937f5308950bb67c20412dc4fc6837b6db4bc415 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:35 +0530
+Subject: [PATCH] feat(attendance): support configurable limit param in
+ get_all_attendance_records
+
+---
+ backend/attendance.py | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 4453dc8..488b024 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -1193,6 +1193,11 @@ def get_all_attendance_records():
+     session_id = request.args.get("session_id")
+     method = request.args.get("method")
+     search = request.args.get("search", "").strip().lower()
++    raw_limit = request.args.get("limit", "150")
++    try:
++        limit_val = max(1, min(int(raw_limit), 500))
++    except (ValueError, TypeError):
++        limit_val = 150
+ 
+     query = Attendance.query.join(Student).join(User)
+ 
+@@ -1217,7 +1222,7 @@ def get_all_attendance_records():
+             (User.name.ilike(f"%{search}%"))
+         )
+ 
+-    records = query.order_by(Attendance.timestamp.desc()).limit(150).all()
++    records = query.order_by(Attendance.timestamp.desc()).limit(limit_val).all()
+     results = []
+ 
+     for r in records:
+-- 
+2.55.0.windows.5
+

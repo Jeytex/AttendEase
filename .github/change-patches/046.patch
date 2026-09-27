@@ -1,0 +1,26 @@
+From 3f43e36ced1af4c4e7fa24c54d0cc95aecae7bea Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:37 +0530
+Subject: [PATCH] config(zepiris): allow configuring inference device via
+ ZEPIRIS_DEVICE
+
+---
+ backend/zepiris_service.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backend/zepiris_service.py b/backend/zepiris_service.py
+index 62c68ad..d59e5e6 100644
+--- a/backend/zepiris_service.py
++++ b/backend/zepiris_service.py
+@@ -48,7 +48,7 @@ class ZepirisService:
+             return
+ 
+         self.models_dir = ZEPIRIS_ROOT / "models"
+-        self.device = "cpu"
++        self.device = os.getenv("ZEPIRIS_DEVICE", "cpu")
+         self.similarity_threshold = float(os.getenv("ZEPIRIS_SIMILARITY_THRESHOLD", "0.50"))  # InsightFace cosine similarity threshold
+ 
+         print("[ZepirisService] Initializing Zepiris ML models...")
+-- 
+2.55.0.windows.5
+

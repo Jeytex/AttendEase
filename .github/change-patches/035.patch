@@ -1,0 +1,24 @@
+From bda4f51572e60228015581c0e6edd2e97a6dc8be Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:36 +0530
+Subject: [PATCH] docs(attendance): add docstring to mark_attendance endpoint
+
+---
+ backend/attendance.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 488b024..1b1cae1 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -449,6 +449,7 @@ def get_faculty_sessions_history():
+ @attendance.route("/mark", methods=["POST"])
+ @jwt_required()
+ def mark_attendance():
++    """Verify student JWT, active session, server-side QR expiry/token, and 1:1 Zepiris biometrics."""
+     claims = get_jwt()
+ 
+     # Only students can mark attendance
+-- 
+2.55.0.windows.5
+

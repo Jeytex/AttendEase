@@ -1,0 +1,34 @@
+From e4a965f44427404e43b79342f6d4c7913d3bf36a Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:40 +0530
+Subject: [PATCH] fix(context): reset subjects and studentStats state on logout
+
+---
+ frontend/src/context/AttendanceContext.jsx | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/frontend/src/context/AttendanceContext.jsx b/frontend/src/context/AttendanceContext.jsx
+index ea87511..671740e 100644
+--- a/frontend/src/context/AttendanceContext.jsx
++++ b/frontend/src/context/AttendanceContext.jsx
+@@ -204,11 +204,17 @@ export function AttendanceProvider({ children }) {
+     cameraManager.stopAll();
+ 
+     setUser(null);
++    setSubjects([]);
+     setActiveSession(null);
+     setEndedSession(null);
+     setScannedQR(null);
+     setLiveStudents([]);
+     setStudentHistory([]);
++    setStudentStats({
++      overallAttendance: 100,
++      classesAttended: 0,
++      classesMissed: 0,
++    });
+     setFacultyHistory([]);
+     navigate('/login');
+   };
+-- 
+2.55.0.windows.5
+

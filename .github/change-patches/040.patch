@@ -1,0 +1,25 @@
+From c13610fdf02d37992c6cc3570ddd0d25d11cdffd Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:36 +0530
+Subject: [PATCH] feat(profile): include zepiris_identity_id in student profile
+ response
+
+---
+ backend/attendance.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index baf4968..2bdf516 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -1393,6 +1393,7 @@ def get_student_profile():
+             "roll_number": student.roll_number,
+             "status": student.status,
+             "face_registered": bool(student.face_profile is not None),
++            "zepiris_identity_id": student.zepiris_identity_id,
+             "created_at": student.created_at.strftime("%b %d, %Y") if student.created_at else "—",
+             "total_attended": att_count
+         }
+-- 
+2.55.0.windows.5
+

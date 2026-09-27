@@ -1,0 +1,55 @@
+From 23592e834abf1c0194086d97f2d5d35a53fdbb54 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:34 +0530
+Subject: [PATCH] refactor(attendance): extract module-level DAYS_ORDER
+ constant
+
+---
+ backend/attendance.py | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index af7377a..3145db1 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -25,6 +25,16 @@ faculty_bp = Blueprint("faculty", __name__)
+ 
+ ALLOWED_QR_LIFETIMES = (3, 5, 10, 15)
+ 
++DAYS_ORDER = {
++    "Monday": 1,
++    "Tuesday": 2,
++    "Wednesday": 3,
++    "Thursday": 4,
++    "Friday": 5,
++    "Saturday": 6,
++    "Sunday": 7,
++}
++
+ 
+ def faculty_only():
+     claims = get_jwt()
+@@ -92,19 +102,9 @@ def get_subjects():
+ def get_timetable():
+     slots = TimetableSlot.query.all()
+ 
+-    days_order = {
+-        "Monday": 1,
+-        "Tuesday": 2,
+-        "Wednesday": 3,
+-        "Thursday": 4,
+-        "Friday": 5,
+-        "Saturday": 6,
+-        "Sunday": 7,
+-    }
+-
+     sorted_slots = sorted(
+         slots,
+-        key=lambda s: (days_order.get(s.day_of_week, 99), s.start_time)
++        key=lambda s: (DAYS_ORDER.get(s.day_of_week, 99), s.start_time)
+     )
+ 
+     return jsonify({
+-- 
+2.55.0.windows.5
+

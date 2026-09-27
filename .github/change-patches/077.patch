@@ -1,0 +1,26 @@
+From 6497dafa101c089789c056ce09b8896996a41e9e Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:41 +0530
+Subject: [PATCH] a11y(navbar): add aria-label and type=button to mobile menu
+ toggle
+
+---
+ frontend/src/components/layout/Navbar.jsx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/frontend/src/components/layout/Navbar.jsx b/frontend/src/components/layout/Navbar.jsx
+index 8441390..6c7f1de 100644
+--- a/frontend/src/components/layout/Navbar.jsx
++++ b/frontend/src/components/layout/Navbar.jsx
+@@ -46,6 +46,8 @@ export function Navbar({ onMobileMenuToggle }) {
+       <div className="flex items-center gap-3">
+         {/* Mobile menu button */}
+         <button
++          type="button"
++          aria-label="Toggle navigation menu"
+           onClick={onMobileMenuToggle}
+           className="md:hidden p-1.5 rounded-xl text-black hover:bg-neutral-100 border border-neutral-200 cursor-pointer"
+         >
+-- 
+2.55.0.windows.5
+

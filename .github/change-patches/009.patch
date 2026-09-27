@@ -1,0 +1,27 @@
+From 37db694a51b6b0eeeb8e2f0f76fa2becda9369c7 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:32 +0530
+Subject: [PATCH] chore(models): add __repr__ to TimetableSlot model
+
+---
+ backend/models.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/backend/models.py b/backend/models.py
+index 969cae4..8d669e8 100644
+--- a/backend/models.py
++++ b/backend/models.py
+@@ -136,4 +136,7 @@ class TimetableSlot(db.Model):
+     end_time = db.Column(db.String(20), nullable=False)     # e.g., "11:00 AM"
+     subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)
+ 
+-    subject = db.relationship("Subject")
+\ No newline at end of file
++    subject = db.relationship("Subject")
++
++    def __repr__(self):
++        return f"<TimetableSlot {self.day_of_week} {self.start_time}-{self.end_time}>"
+\ No newline at end of file
+-- 
+2.55.0.windows.5
+

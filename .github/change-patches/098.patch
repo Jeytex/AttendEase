@@ -1,0 +1,32 @@
+From 2fc0764a141ddfa742fc4c426f63422230311691 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:44 +0530
+Subject: [PATCH] docs(readme): remove obsolete control_panel.py section
+
+---
+ README.md | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/README.md b/README.md
+index 4ebdd52..52a77d5 100644
+--- a/README.md
++++ b/README.md
+@@ -71,15 +71,6 @@ npm run dev -- --host
+ ```
+ *The frontend development server will start on `https://0.0.0.0:5173`.*
+ 
+-### 4. Optional: Desktop Control Panel
+-
+-On Windows, you can double-click `run_control_panel.bat` or run:
+-
+-```bash
+-python control_panel.py
+-```
+-This launches a GUI dashboard that allows you to start backend/frontend servers, open browser links, and manage sessions with one click.
+-
+ ---
+ 
+ ## 📱 Local Network & Phone Access
+-- 
+2.55.0.windows.5
+

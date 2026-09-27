@@ -1,0 +1,24 @@
+From 080cf3277f0d7dc00486eca7fd7418f5ffb3198b Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:40 +0530
+Subject: [PATCH] fix(camera): stop active camera streams on window pagehide
+ event
+
+---
+ frontend/src/utils/cameraManager.js | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/frontend/src/utils/cameraManager.js b/frontend/src/utils/cameraManager.js
+index 55f7544..d123ce3 100644
+--- a/frontend/src/utils/cameraManager.js
++++ b/frontend/src/utils/cameraManager.js
+@@ -111,5 +111,6 @@ export const cameraManager = {
+ // Global event listeners to guarantee camera turns off on page leave or browser back/forward
+ if (typeof window !== 'undefined') {
+   window.addEventListener('beforeunload', () => cameraManager.stopAll());
++  window.addEventListener('pagehide', () => cameraManager.stopAll());
+   window.addEventListener('popstate', () => cameraManager.stopAll());
+ }
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,25 @@
+From f18f6d2194fdebf6c2cc4a0719d427f3fb8b93d4 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:36 +0530
+Subject: [PATCH] fix(attendance): cap manual override reason to 255 characters
+
+---
+ backend/attendance.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index f8b914f..baf4968 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -263,7 +263,7 @@ def manual_mark_attendance(session_id):
+     data = request.get_json(silent=True) or {}
+     student_id = data.get("student_id")
+     roll_number = data.get("roll_number")
+-    reason = str(data.get("reason", "")).strip() or "Faculty manual override"
++    reason = (str(data.get("reason", "")).strip() or "Faculty manual override")[:255]
+ 
+     student = None
+     if student_id:
+-- 
+2.55.0.windows.5
+

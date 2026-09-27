@@ -1,0 +1,50 @@
+From 352e9ed979703210778c87db67c320dec4d15dd1 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:41 +0530
+Subject: [PATCH] a11y(ui): link label and input elements with useId in Input
+ component
+
+---
+ frontend/src/components/ui/Input.jsx | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/frontend/src/components/ui/Input.jsx b/frontend/src/components/ui/Input.jsx
+index f5b305a..de43b1c 100644
+--- a/frontend/src/components/ui/Input.jsx
++++ b/frontend/src/components/ui/Input.jsx
+@@ -1,7 +1,8 @@
+-import React from 'react';
++import React, { useId } from 'react';
+ 
+ export function Input({
+   label,
++  id,
+   type = 'text',
+   placeholder,
+   value,
+@@ -11,14 +12,21 @@ export function Input({
+   required = false,
+   ...props
+ }) {
++  const generatedId = useId();
++  const inputId = id || generatedId;
++
+   return (
+     <div className={`w-full ${className}`}>
+       {label && (
+-        <label className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${variant === 'dark' ? 'text-neutral-300' : 'text-neutral-700'}`}>
++        <label
++          htmlFor={inputId}
++          className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${variant === 'dark' ? 'text-neutral-300' : 'text-neutral-700'}`}
++        >
+           {label}
+         </label>
+       )}
+       <input
++        id={inputId}
+         type={type}
+         value={value}
+         onChange={onChange}
+-- 
+2.55.0.windows.5
+

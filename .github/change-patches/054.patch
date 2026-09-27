@@ -1,0 +1,31 @@
+From 45e06b01ccf0bc5ba2c7918e01d09f20853fb5e5 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:38 +0530
+Subject: [PATCH] test(zepiris): add unit test for cosine_similarity edge cases
+
+---
+ backend/test_suite.py | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/backend/test_suite.py b/backend/test_suite.py
+index 4e90bee..4541f74 100644
+--- a/backend/test_suite.py
++++ b/backend/test_suite.py
+@@ -697,6 +697,14 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
+         print(" ALL 22 PRODUCTION SYSTEM TESTS PASSED SUCCESSFULLY! ")
+         print("=======================================================\n")
+ 
++    def test_cosine_similarity_zero_and_identical_vectors(self):
++        """Verify cosine_similarity handles zero vectors, identical vectors, and opposite vectors."""
++        v = np.array(self.student_alice_emb, dtype=np.float32)
++        zero = np.zeros(512, dtype=np.float32)
++        self.assertAlmostEqual(zepiris_service.cosine_similarity(v, v), 1.0, places=5)
++        self.assertAlmostEqual(zepiris_service.cosine_similarity(v, -v), -1.0, places=5)
++        self.assertEqual(zepiris_service.cosine_similarity(v, zero), 0.0)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-- 
+2.55.0.windows.5
+

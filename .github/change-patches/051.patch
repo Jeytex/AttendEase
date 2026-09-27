@@ -1,0 +1,25 @@
+From a8aadc87e402cf8accef5d6c22e3749b2fcb24ad Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:38 +0530
+Subject: [PATCH] test(backend): track ended_sess_id in created_session_ids for
+ cleanup
+
+---
+ backend/test_suite.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backend/test_suite.py b/backend/test_suite.py
+index 451f6fb..e02f48f 100644
+--- a/backend/test_suite.py
++++ b/backend/test_suite.py
+@@ -504,6 +504,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
+             db.session.add(ended_sess)
+             db.session.commit()
+             ended_sess_id = ended_sess.id
++            self.created_session_ids.append(ended_sess_id)
+ 
+         with patch.object(zepiris_service, "assess_quality", return_value=passed_quality):
+             with patch.object(zepiris_service, "extract_face_embedding", return_value=(np.array(self.student_charlie_emb, dtype=np.float32), {"face_detected": True, "embedding_dim": 512})):
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,26 @@
+From 98e8178fbeba7a04ae4d7f445503e3c5118a465f Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:39 +0530
+Subject: [PATCH] feat(frontend): add description and theme-color meta tags to
+ index.html
+
+---
+ frontend/index.html | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/frontend/index.html b/frontend/index.html
+index 608778c..e6a30a8 100644
+--- a/frontend/index.html
++++ b/frontend/index.html
+@@ -4,6 +4,8 @@
+     <meta charset="UTF-8" />
+     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <meta name="theme-color" content="#000000" />
++    <meta name="description" content="AttendEase — Smart College Attendance System with Dynamic QR Codes and Zepiris Biometrics" />
+     <title>AttendEase — College Attendance System</title>
+   </head>
+   <body>
+-- 
+2.55.0.windows.5
+

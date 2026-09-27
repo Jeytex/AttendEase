@@ -1,0 +1,28 @@
+From 635d239b9fe3fb4826bacfe6588af2c298c3b0be Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:35 +0530
+Subject: [PATCH] fix(faculty): prevent deleting faculty account with existing
+ class sessions
+
+---
+ backend/attendance.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index f82be5b..4453dc8 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -1102,6 +1102,10 @@ def delete_admin_faculty(faculty_id):
+     if prof.user_id == current_user_id:
+         return jsonify({"error": "Cannot delete your own active administrator account"}), 400
+ 
++    linked_session = ClassSession.query.filter_by(faculty_id=prof.user_id).first()
++    if linked_session:
++        return jsonify({"error": "Cannot delete a faculty account with recorded attendance sessions"}), 400
++
+     user = prof.user
+     db.session.delete(prof)
+     if user:
+-- 
+2.55.0.windows.5
+

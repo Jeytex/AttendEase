@@ -1,0 +1,38 @@
+From f6584fbdb83a50c46464a3417e7466b0a0f6f0d9 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:43 +0530
+Subject: [PATCH] feat(profile): display Zepiris Identity ID on student
+ ProfilePage
+
+---
+ frontend/src/pages/student/ProfilePage.jsx | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/frontend/src/pages/student/ProfilePage.jsx b/frontend/src/pages/student/ProfilePage.jsx
+index 35084f5..30a6edc 100644
+--- a/frontend/src/pages/student/ProfilePage.jsx
++++ b/frontend/src/pages/student/ProfilePage.jsx
+@@ -22,6 +22,7 @@ export function ProfilePage() {
+   const faceRegistered = profile ? profile.face_registered : (user?.status === 'active');
+   const totalAttended = profile?.total_attended ?? 0;
+   const createdAt = profile?.created_at || '—';
++  const zepirisIdentityId = profile?.zepiris_identity_id || user?.zepiris_identity_id || '—';
+ 
+   return (
+     <div className="space-y-6 max-w-4xl mx-auto py-2">
+@@ -86,8 +87,10 @@ export function ProfilePage() {
+           </div>
+ 
+           <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200/80">
+-            <span className="text-[10px] font-bold uppercase text-neutral-400 font-mono">Role</span>
+-            <p className="font-bold text-black text-sm mt-1">Student</p>
++            <span className="text-[10px] font-bold uppercase text-neutral-400 font-mono">Zepiris Identity ID</span>
++            <p className="font-mono font-semibold text-black text-xs mt-1 truncate" title={zepirisIdentityId}>
++              {zepirisIdentityId}
++            </p>
+           </div>
+ 
+           <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200/80">
+-- 
+2.55.0.windows.5
+

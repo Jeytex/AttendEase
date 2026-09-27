@@ -1,0 +1,31 @@
+From cd1c9020053010890d56eeebac86e8038eeee900 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:34 +0530
+Subject: [PATCH] fix(attendance): sort timetable slots by weekday and
+ start_time in student dashboard
+
+---
+ backend/attendance.py | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 3145db1..c5cfeb8 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -1421,8 +1421,11 @@ def get_student_dashboard():
+             "started_at": s.created_at.strftime("%I:%M %p") if s.created_at else "—"
+         })
+ 
+-    # Real timetable schedule from DB
+-    slots = TimetableSlot.query.all()
++    # Real timetable schedule from DB sorted by day and start time
++    slots = sorted(
++        TimetableSlot.query.all(),
++        key=lambda s: (DAYS_ORDER.get(s.day_of_week, 99), s.start_time)
++    )
+     timetable_data = []
+     for slot in slots:
+         timetable_data.append({
+-- 
+2.55.0.windows.5
+

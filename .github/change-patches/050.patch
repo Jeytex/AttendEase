@@ -1,0 +1,27 @@
+From c9fc6653a4a8c76a6f6b1a28a1ff105f724ef921 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:37 +0530
+Subject: [PATCH] refactor(zepiris): use context manager when opening PIL image
+ in decode_image
+
+---
+ backend/zepiris_service.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/backend/zepiris_service.py b/backend/zepiris_service.py
+index 4545ecd..577a1a8 100644
+--- a/backend/zepiris_service.py
++++ b/backend/zepiris_service.py
+@@ -127,7 +127,8 @@ class ZepirisService:
+         else:
+             raise ValueError("Unsupported image input type. Expected base64 str or bytes.")
+ 
+-        pil_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
++        with Image.open(io.BytesIO(image_bytes)) as img:
++            pil_image = img.convert("RGB")
+         return np.array(pil_image, dtype=np.uint8)
+ 
+     def assess_quality(self, image_rgb: np.ndarray) -> Dict[str, Any]:
+-- 
+2.55.0.windows.5
+

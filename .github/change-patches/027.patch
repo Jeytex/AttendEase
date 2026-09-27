@@ -1,0 +1,26 @@
+From 4c190b5ea0b8d2e614268210912d2a4518aea15a Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:35 +0530
+Subject: [PATCH] fix(attendance): make roll number lookup case-insensitive in
+ manual mark
+
+---
+ backend/attendance.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backend/attendance.py b/backend/attendance.py
+index 96af512..9a2fbe8 100644
+--- a/backend/attendance.py
++++ b/backend/attendance.py
+@@ -271,7 +271,7 @@ def manual_mark_attendance(session_id):
+         except (ValueError, TypeError):
+             pass
+     elif roll_number:
+-        student = Student.query.filter_by(roll_number=str(roll_number).strip()).first()
++        student = Student.query.filter(Student.roll_number.ilike(str(roll_number).strip())).first()
+ 
+     if not student:
+         return jsonify({"error": "Student not found"}), 404
+-- 
+2.55.0.windows.5
+

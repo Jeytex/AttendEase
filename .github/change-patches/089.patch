@@ -1,0 +1,87 @@
+From 5d3f66475226864a8158e1ce9b4929aa5f46e053 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:43 +0530
+Subject: [PATCH] fix(faculty): track and clear toast timers in TimetablePage
+ and AttendancePage
+
+---
+ frontend/src/pages/faculty/AttendancePage.jsx | 9 +++++++--
+ frontend/src/pages/faculty/TimetablePage.jsx  | 9 +++++++--
+ 2 files changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/frontend/src/pages/faculty/AttendancePage.jsx b/frontend/src/pages/faculty/AttendancePage.jsx
+index 40e4b1f..6f06b2c 100644
+--- a/frontend/src/pages/faculty/AttendancePage.jsx
++++ b/frontend/src/pages/faculty/AttendancePage.jsx
+@@ -1,4 +1,4 @@
+-import React, { useState, useEffect, useCallback } from 'react';
++import React, { useState, useEffect, useCallback, useRef } from 'react';
+ import { useAttendance } from '../../context/AttendanceContext';
+ import { Button } from '../../components/ui/Button';
+ 
+@@ -21,6 +21,7 @@ export function AttendancePage() {
+   const [manualLoading, setManualLoading] = useState(false);
+   const [manualError, setManualError] = useState('');
+   const [toastMessage, setToastMessage] = useState('');
++  const toastTimerRef = useRef(null);
+ 
+   const loadData = useCallback(async () => {
+     try {
+@@ -41,6 +42,9 @@ export function AttendancePage() {
+ 
+   useEffect(() => {
+     fetchSubjects();
++    return () => {
++      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
++    };
+   }, [fetchSubjects]);
+ 
+   useEffect(() => {
+@@ -52,7 +56,8 @@ export function AttendancePage() {
+ 
+   const showToast = (msg) => {
+     setToastMessage(msg);
+-    setTimeout(() => setToastMessage(''), 4000);
++    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
++    toastTimerRef.current = setTimeout(() => setToastMessage(''), 4000);
+   };
+ 
+   const handleManualSubmit = async (e) => {
+diff --git a/frontend/src/pages/faculty/TimetablePage.jsx b/frontend/src/pages/faculty/TimetablePage.jsx
+index 40e8016..6e51fad 100644
+--- a/frontend/src/pages/faculty/TimetablePage.jsx
++++ b/frontend/src/pages/faculty/TimetablePage.jsx
+@@ -1,4 +1,4 @@
+-import React, { useState, useEffect, useCallback } from 'react';
++import React, { useState, useEffect, useCallback, useRef } from 'react';
+ import { useAttendance } from '../../context/AttendanceContext';
+ import { Button } from '../../components/ui/Button';
+ 
+@@ -33,6 +33,7 @@ export function TimetablePage() {
+   const [editError, setEditError] = useState('');
+ 
+   const [toastMessage, setToastMessage] = useState('');
++  const toastTimerRef = useRef(null);
+ 
+   const loadData = useCallback(async () => {
+     try {
+@@ -52,11 +53,15 @@ export function TimetablePage() {
+ 
+   useEffect(() => {
+     loadData();
++    return () => {
++      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
++    };
+   }, [loadData]);
+ 
+   const showToast = (msg) => {
+     setToastMessage(msg);
+-    setTimeout(() => setToastMessage(''), 4000);
++    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
++    toastTimerRef.current = setTimeout(() => setToastMessage(''), 4000);
+   };
+ 
+   const daysOfWeek = WEEKDAYS;
+-- 
+2.55.0.windows.5
+

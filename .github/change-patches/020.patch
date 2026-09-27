@@ -1,0 +1,37 @@
+From 5fd99f664e3a4d5be9dff721c77b07c965188212 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:34 +0530
+Subject: [PATCH] fix(qr): restrict session QR generation endpoint to faculty
+ role
+
+---
+ backend/qr.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/backend/qr.py b/backend/qr.py
+index 6ba0963..fa76ddf 100644
+--- a/backend/qr.py
++++ b/backend/qr.py
+@@ -2,7 +2,7 @@ from datetime import timedelta
+ import secrets
+ 
+ from flask import Blueprint, jsonify
+-from flask_jwt_extended import jwt_required
++from flask_jwt_extended import jwt_required, get_jwt
+ 
+ from database import db
+ from models import ClassSession, now_utc
+@@ -17,6 +17,10 @@ QR_DEFAULT_LIFETIME_SECONDS = 5
+ @jwt_required()
+ def get_current_qr(session_id):
+     """Return the active QR token for a session, rotating server-side when expired."""
++    claims = get_jwt()
++    if claims.get("role") != "faculty":
++        return jsonify({"error": "Faculty access required"}), 403
++
+     session = db.session.get(ClassSession, session_id)
+ 
+     if not session:
+-- 
+2.55.0.windows.5
+

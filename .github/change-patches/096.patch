@@ -1,0 +1,26 @@
+From a0900441240c7c3111d0bb62b54cc2240ae5a5c6 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:44 +0530
+Subject: [PATCH] docs(readme): update QR token lifetime description in API
+ reference
+
+---
+ README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/README.md b/README.md
+index ed95d13..9ff3140 100644
+--- a/README.md
++++ b/README.md
+@@ -116,7 +116,7 @@ To scan QR codes from a mobile device on the same Wi-Fi network:
+ - `GET /api/attendance/sessions/<id>/records` — Retrieve live/final attendance records.
+ 
+ ### Dynamic QR System
+-- `GET /api/qr/sessions/<id>/qr` — Generate or fetch the current 15-second QR token.
++- `GET /api/qr/sessions/<id>/qr` — Generate or fetch the current rotating QR token (configurable 3s, 5s, 10s, 15s, or 30s lifetime; defaults to 5s).
+ 
+ ### Student Attendance
+ - `POST /api/attendance/mark` — Validate QR token and record student attendance.
+-- 
+2.55.0.windows.5
+

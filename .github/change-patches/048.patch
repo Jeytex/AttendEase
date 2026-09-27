@@ -1,0 +1,26 @@
+From 9eda5c0e5c0a54d24982d39f7e214d4a5d705940 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:37 +0530
+Subject: [PATCH] fix(zepiris): validate matching embedding shapes in
+ cosine_similarity
+
+---
+ backend/zepiris_service.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backend/zepiris_service.py b/backend/zepiris_service.py
+index e24129e..643b9ea 100644
+--- a/backend/zepiris_service.py
++++ b/backend/zepiris_service.py
+@@ -230,6 +230,8 @@ class ZepirisService:
+     @staticmethod
+     def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
+         """Compute cosine similarity between two normalized embedding vectors."""
++        if a.shape != b.shape:
++            raise ValueError("Embedding vectors must have matching dimensions")
+         dot = float(np.dot(a, b))
+         norm_a = float(np.linalg.norm(a))
+         norm_b = float(np.linalg.norm(b))
+-- 
+2.55.0.windows.5
+

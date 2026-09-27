@@ -1,0 +1,26 @@
+From dad6bbc820632402002b478987015475594c3202 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:44 +0530
+Subject: [PATCH] docs(readme): update backend test command to python
+ test_suite.py
+
+---
+ README.md | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/README.md b/README.md
+index 906d10a..ed95d13 100644
+--- a/README.md
++++ b/README.md
+@@ -130,6 +130,6 @@ To run the automated backend test suite:
+ 
+ ```bash
+ cd backend
+-python -c "import test_app; unittest.main(module='test_app')"
++python test_suite.py
+ ```
+-*All 15 end-to-end scenarios test authentication, session creation, duplicate prevention, QR rotation, QR expiration, attendance recording, and multi-session isolation.*
++*All 22 production scenarios test authentication, biometric face enrollment, quality/liveness enforcement, dynamic QR rotation, QR expiration, duplicate/concurrent attendance prevention, and faculty manual overrides.*
+-- 
+2.55.0.windows.5
+

@@ -1,54 +1,109 @@
-name: Random Auto Commit
+name: Incremental Patch Release
 
 on:
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
+    inputs:
+      force_release:
+        description: "Bypass the 2-6 hour timer and release one eligible patch immediately"
+        required: false
+        default: true
+        type: boolean
 
 permissions:
   contents: write
+  actions: write
+
+concurrency:
+  group: incremental-patch-release
+  cancel-in-progress: false
 
 jobs:
-  random-commit:
+  release-patch:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout origin/main
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
-      - name: Decide whether to commit
+      - name: Decide whether to release a patch
         id: decision
         run: |
+          RELEASED_FILE=".github/change-patches/released.txt"
           STATE_FILE=".github/auto-commit-state"
 
+          # 1. Stop automatically if all 100 patches have been released
+          if [ -f "$RELEASED_FILE" ]; then
+            RELEASED_COUNT=$(grep -E '^[0-9]{3}$' "$RELEASED_FILE" | sort -u | wc -l | tr -d '[:space:]')
+          else
+            RELEASED_COUNT=0
+          fi
+
+          if [ "$RELEASED_COUNT" -ge 100 ]; then
+            echo "All 100 patches have already been released ($RELEASED_COUNT/100). Stopping."
+            echo "commit=false" >> "$GITHUB_OUTPUT"
+            echo "all_done=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "all_done=false" >> "$GITHUB_OUTPUT"
+
+          # 2. Allow manual testing via workflow_dispatch to release immediately
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force_release }}" != "false" ]; then
+            echo "Manual workflow_dispatch triggered (force_release=true). Proceeding with release."
+            echo "commit=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # 3. Scheduled run: check random 2-6 hour (7200-21600s) interval in .github/auto-commit-state
           if [ -f "$STATE_FILE" ]; then
-            NEXT=$(cat "$STATE_FILE")
+            NEXT=$(tr -d '[:space:]' < "$STATE_FILE")
           else
             NEXT=$(( $(date +%s) + 7200 + RANDOM % 14400 ))
+          fi
+
+          if [ -z "$NEXT" ]; then
+            NEXT=0
           fi
 
           NOW=$(date +%s)
 
           if [ "$NOW" -ge "$NEXT" ]; then
+            echo "Release window reached (NOW=$NOW >= NEXT=$NEXT). Proceeding with release."
             echo "commit=true" >> "$GITHUB_OUTPUT"
-
-            DELAY=$((7200 + RANDOM % 14400))
-            echo $((NOW + DELAY)) > "$STATE_FILE"
           else
+            WAIT_MIN=$(( (NEXT - NOW) / 60 ))
+            echo "Next release window in ~${WAIT_MIN} minutes (NOW=$NOW < NEXT=$NEXT). Skipping."
             echo "commit=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Make random update
+      - name: Select and apply one eligible patch
+        id: release
         if: steps.decision.outputs.commit == 'true'
         run: |
-          echo "Automatic update: $(date -u)" >> auto-update.txt
+          python3 .github/change-patches/release_next_patch.py
 
-      - name: Commit and push
-        if: steps.decision.outputs.commit == 'true'
+      - name: Commit and push single patch release
+        if: steps.decision.outputs.commit == 'true' && steps.release.outputs.applied == 'true'
+        env:
+          COMMIT_MSG: ${{ steps.release.outputs.commit_message }}
+          PATCH_ID: ${{ steps.release.outputs.patch_id }}
+          REMAINING: ${{ steps.release.outputs.remaining }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add auto-update.txt .github/auto-commit-state
-          git commit -m "Automatic update"
-          git push
+          git commit -m "$COMMIT_MSG"
+          git push origin HEAD:main
+          echo "Pushed patch ${PATCH_ID}: ${COMMIT_MSG} (${REMAINING} patches remaining)."
+
+      - name: Disable workflow automatically when all 100 patches are complete
+        if: steps.decision.outputs.all_done == 'true' || (steps.release.outputs.applied == 'true' && steps.release.outputs.remaining == '0')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "All 100 patches have been released. Disabling workflow schedule if permitted."
+          gh workflow disable "${{ github.workflow }}" --repo "${{ github.repository }}" || true

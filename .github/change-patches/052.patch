@@ -1,0 +1,24 @@
+From 83211bbd066bf45bc69b18f4dee70c7f77fc01c0 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:38 +0530
+Subject: [PATCH] chore(tests): remove unused secrets import in test_suite.py
+
+---
+ backend/test_suite.py | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/backend/test_suite.py b/backend/test_suite.py
+index e02f48f..88df974 100644
+--- a/backend/test_suite.py
++++ b/backend/test_suite.py
+@@ -7,7 +7,6 @@ Session Invalidation, and Faculty Manual Overrides.
+ import base64
+ import io
+ import json
+-import secrets
+ import time
+ import unittest
+ from datetime import datetime, timedelta, timezone
+-- 
+2.55.0.windows.5
+

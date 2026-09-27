@@ -1,0 +1,36 @@
+From 28f1ec423a65cc46d4d0c55b04092e2cecdd90e9 Mon Sep 17 00:00:00 2001
+From: Sidharth Ammisetti <sidharthammisetti.ai@gmail.com>
+Date: Sun, 27 Sep 2026 23:17:39 +0530
+Subject: [PATCH] docs(frontend): add JSDoc comments to api/config.js
+
+---
+ frontend/src/api/config.js | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/frontend/src/api/config.js b/frontend/src/api/config.js
+index 05e259a..d83feb7 100644
+--- a/frontend/src/api/config.js
++++ b/frontend/src/api/config.js
+@@ -1,3 +1,7 @@
++/**
++ * Resolve the base API URL from Vite environment variables, stripping any trailing slashes.
++ * @returns {string} Normalized base URL (empty string for Vite proxy / relative requests)
++ */
+ const getDefaultApiUrl = () => {
+   if (import.meta.env.VITE_API_URL !== undefined) {
+     return String(import.meta.env.VITE_API_URL).replace(/\/+$/, "");
+@@ -7,6 +11,11 @@ const getDefaultApiUrl = () => {
+ 
+ export const API_URL = getDefaultApiUrl();
+ 
++/**
++ * Construct JSON request headers with optional Bearer authentication token.
++ * @param {string} [token] - JWT access token
++ * @returns {Record<string, string>} HTTP headers object
++ */
+ export const getAuthHeaders = (token) => {
+   const headers = {
+     "Content-Type": "application/json",
+-- 
+2.55.0.windows.5
+
