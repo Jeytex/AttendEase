@@ -1,29 +1,54 @@
-name: Auto Commit
+name: Random Auto Commit
 
 on:
   schedule:
-    - cron: "0 */3 * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  update:
+  random-commit:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Update file
+      - name: Decide whether to commit
+        id: decision
         run: |
-          echo "Last update: $(date -u)" > auto-update.txt
+          STATE_FILE=".github/auto-commit-state"
 
-      - name: Commit changes
+          if [ -f "$STATE_FILE" ]; then
+            NEXT=$(cat "$STATE_FILE")
+          else
+            NEXT=$(( $(date +%s) + 7200 + RANDOM % 14400 ))
+          fi
+
+          NOW=$(date +%s)
+
+          if [ "$NOW" -ge "$NEXT" ]; then
+            echo "commit=true" >> "$GITHUB_OUTPUT"
+
+            DELAY=$((7200 + RANDOM % 14400))
+            echo $((NOW + DELAY)) > "$STATE_FILE"
+          else
+            echo "commit=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Make random update
+        if: steps.decision.outputs.commit == 'true'
+        run: |
+          echo "Automatic update: $(date -u)" >> auto-update.txt
+
+      - name: Commit and push
+        if: steps.decision.outputs.commit == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add auto-update.txt
+
+          git add auto-update.txt .github/auto-commit-state
           git commit -m "Automatic update"
           git push
