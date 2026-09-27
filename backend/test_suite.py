@@ -18,7 +18,7 @@ from PIL import Image
 
 from app import create_app
 from database import db
-from models import User, Student, FacultyProfile, FaceProfile, Subject, ClassSession, Attendance, TimetableSlot
+from models import User, Student, FacultyProfile, FaceProfile, Subject, ClassSession, Attendance
 from zepiris_service import zepiris_service
 
 
