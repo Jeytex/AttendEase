@@ -1,3 +1,5 @@
+"""Biometric face enrollment and status routes for student accounts."""
+
 import secrets
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
