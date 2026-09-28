@@ -116,7 +116,7 @@ To scan QR codes from a mobile device on the same Wi-Fi network:
 - `GET /api/attendance/sessions/<id>/records` — Retrieve live/final attendance records.
 
 ### Dynamic QR System
-- `GET /api/qr/sessions/<id>/qr` — Generate or fetch the current 15-second QR token.
+- `GET /api/qr/sessions/<id>/qr` — Generate or fetch the current rotating QR token (configurable 3s, 5s, 10s, 15s, or 30s lifetime; defaults to 5s).
 
 ### Student Attendance
 - `POST /api/attendance/mark` — Validate QR token and record student attendance.
