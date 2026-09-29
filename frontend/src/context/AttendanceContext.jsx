@@ -617,10 +617,7 @@ export function AttendanceProvider({ children }) {
     if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
     const res = await fetch(`${API_URL}/api/attendance/admin/students`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...getAuthHeaders(user.access_token),
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify(studentData),
     });
     const data = await res.json();
@@ -632,10 +629,7 @@ export function AttendanceProvider({ children }) {
     if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
     const res = await fetch(`${API_URL}/api/attendance/admin/students/${studentId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...getAuthHeaders(user.access_token),
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify(studentData),
     });
     const data = await res.json();
@@ -684,10 +678,7 @@ export function AttendanceProvider({ children }) {
     if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
     const res = await fetch(`${API_URL}/api/attendance/admin/faculty`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...getAuthHeaders(user.access_token),
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify(facultyData),
     });
     const data = await res.json();
@@ -699,10 +690,7 @@ export function AttendanceProvider({ children }) {
     if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
     const res = await fetch(`${API_URL}/api/attendance/admin/faculty/${facultyId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...getAuthHeaders(user.access_token),
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify(facultyData),
     });
     const data = await res.json();
@@ -725,10 +713,7 @@ export function AttendanceProvider({ children }) {
     if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
     const res = await fetch(`${API_URL}/api/attendance/subjects`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...getAuthHeaders(user.access_token),
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify(subjectData),
     });
     const data = await res.json();
@@ -741,10 +726,7 @@ export function AttendanceProvider({ children }) {
     if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
     const res = await fetch(`${API_URL}/api/attendance/subjects/${subjectId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...getAuthHeaders(user.access_token),
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify(subjectData),
     });
     const data = await res.json();
@@ -790,10 +772,7 @@ export function AttendanceProvider({ children }) {
     if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
     const res = await fetch(`${API_URL}/api/attendance/timetable`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...getAuthHeaders(user.access_token),
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify(slotData),
     });
     const data = await res.json();
@@ -806,10 +785,7 @@ export function AttendanceProvider({ children }) {
     if (!user || user.role !== 'faculty') throw new Error('Unauthorized');
     const res = await fetch(`${API_URL}/api/attendance/timetable/${slotId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...getAuthHeaders(user.access_token),
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify(slotData),
     });
     const data = await res.json();
