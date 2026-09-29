@@ -74,6 +74,9 @@ class Subject(db.Model):
     name = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(50), unique=True, nullable=False)
 
+    def __repr__(self):
+        return f"<Subject {self.code}: {self.name}>"
+
 
 class ClassSession(db.Model):
     id = db.Column(db.Integer, primary_key=True)

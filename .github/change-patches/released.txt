@@ -1,4 +1,5 @@
 # Released patch IDs (001-100), one per line
+006
 041
 053
 071
