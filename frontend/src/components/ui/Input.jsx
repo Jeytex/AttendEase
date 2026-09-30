@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 export function Input({
   label,
+  id,
   type = 'text',
   placeholder,
   value,
@@ -11,14 +12,21 @@ export function Input({
   required = false,
   ...props
 }) {
+  const generatedId = useId();
+  const inputId = id || generatedId;
+
   return (
     <div className={`w-full ${className}`}>
       {label && (
-        <label className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${variant === 'dark' ? 'text-neutral-300' : 'text-neutral-700'}`}>
+        <label
+          htmlFor={inputId}
+          className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${variant === 'dark' ? 'text-neutral-300' : 'text-neutral-700'}`}
+        >
           {label}
         </label>
       )}
       <input
+        id={inputId}
         type={type}
         value={value}
         onChange={onChange}
