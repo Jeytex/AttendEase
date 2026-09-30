@@ -67,7 +67,9 @@ export function LiveAttendanceMonitor({ liveStudents = [], presentCount = 0, tot
 
                 <div className="text-right">
                   <span className={`text-[11px] font-bold ${isManual ? 'text-blue-800 bg-blue-50 border-blue-200' : 'text-emerald-800 bg-emerald-50 border-emerald-200'} px-2.5 py-1 rounded-lg border font-mono shadow-xs`}>
-                    {isManual ? '👤 Manual' : '✓ QR Face'}
+                    {isManual
+                      ? '👤 Manual'
+                      : `✓ QR Face${item.confidence_score ? ` (${item.confidence_score}%)` : ''}`}
                   </span>
                 </div>
               </div>
