@@ -23,6 +23,8 @@ from zepiris_service import zepiris_service
 attendance = Blueprint("attendance", __name__)
 faculty_bp = Blueprint("faculty", __name__)
 
+ALLOWED_QR_LIFETIMES = (3, 5, 10, 15)
+
 
 def faculty_only():
     claims = get_jwt()
@@ -165,10 +167,11 @@ def create_session():
     qr_lifetime = data.get("qr_lifetime_seconds") or data.get("qr_interval") or 5
     try:
         qr_lifetime = int(qr_lifetime)
-        if qr_lifetime not in [3, 5, 10, 15]:
+        if qr_lifetime not in ALLOWED_QR_LIFETIMES:
             qr_lifetime = 5
     except (ValueError, TypeError):
         qr_lifetime = 5
+
 
     token = secrets.token_urlsafe(24)
     current_time = now_utc()

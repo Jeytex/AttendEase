@@ -1,6 +1,7 @@
 # Released patch IDs (001-100), one per line
 006
 013
+022
 041
 053
 071
