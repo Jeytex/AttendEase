@@ -26,7 +26,8 @@ import { QRSessionPage } from './pages/faculty/QRSessionPage';
 
 function AppContent() {
   const { currentRoute, user, userRole } = useAttendance();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuRoute, setMobileMenuRoute] = useState(null);
+  const mobileMenuOpen = mobileMenuRoute === currentRoute;
   useMousePosition();
 
   // 1. Unauthenticated views
@@ -92,7 +93,7 @@ function AppContent() {
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div
             className="fixed inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={() => setMobileMenuRoute(null)}
           />
           <Sidebar className="relative z-10 w-72 h-full bg-white shadow-2xl" />
         </div>
@@ -100,7 +101,7 @@ function AppContent() {
 
       {/* Main Content Body */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Navbar onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+        <Navbar onMobileMenuToggle={() => setMobileMenuRoute(mobileMenuOpen ? null : currentRoute)} />
 
         <main className="flex-1 p-4 md:p-8 max-w-6xl w-full mx-auto">
           {renderView()}
