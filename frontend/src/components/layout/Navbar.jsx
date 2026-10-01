@@ -46,6 +46,8 @@ export function Navbar({ onMobileMenuToggle }) {
       <div className="flex items-center gap-3">
         {/* Mobile menu button */}
         <button
+          type="button"
+          aria-label="Toggle navigation menu"
           onClick={onMobileMenuToggle}
           className="md:hidden p-1.5 rounded-xl text-black hover:bg-neutral-100 border border-neutral-200 cursor-pointer"
         >
