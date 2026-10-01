@@ -166,6 +166,7 @@ def create_app():
             db.session.commit()
 
     @app.route("/")
+    @app.route("/api/health")
     def home():
         return jsonify({
             "message": "AttendEase backend is running with Zepiris Facial Recognition",
