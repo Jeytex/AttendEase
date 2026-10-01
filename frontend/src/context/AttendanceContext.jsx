@@ -224,10 +224,7 @@ export function AttendanceProvider({ children }) {
 
     const response = await fetch(`${API_URL}/api/student/face/register`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${user.access_token}`,
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify({
         image_base64: imageBase64,
       }),
@@ -524,10 +521,7 @@ export function AttendanceProvider({ children }) {
 
     const res = await fetch(`${API_URL}/api/attendance/mark`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${user.access_token}`,
-      },
+      headers: getAuthHeaders(user.access_token),
       body: JSON.stringify({
         session_id: sessionId,
         token: String(token).trim(),
