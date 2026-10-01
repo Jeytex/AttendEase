@@ -113,6 +113,8 @@ class ZepirisService:
             np.ndarray: RGB image array of shape (H, W, 3), dtype uint8
         """
         if isinstance(image_input, str):
+            if not image_input.strip():
+                raise ValueError("Empty image input")
             if "," in image_input:
                 image_input = image_input.split(",", 1)[1]
             image_bytes = base64.b64decode(image_input)
