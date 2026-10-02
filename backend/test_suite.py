@@ -140,6 +140,12 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
                 )
         self.assertEqual(face_reg_res.status_code, 200)
         self.assertEqual(face_reg_res.get_json()["status"], "active")
+        face_status_res = self.client.get(
+            "/api/student/face/status",
+            headers={"Authorization": f"Bearer {alice_token}"}
+        )
+        self.assertEqual(face_status_res.status_code, 200)
+        self.assertTrue(face_status_res.get_json()["face_registered"])
         print("SCENARIO 3 PASSED: Face registered and linked to Alice.")
 
         # ----------------------------------------------------
