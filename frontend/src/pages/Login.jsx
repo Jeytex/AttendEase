@@ -56,11 +56,11 @@ export function Login() {
         {/* Login Form */}
         <form onSubmit={handleSignIn} className="space-y-4">
           <Input
-            label="ROLL NUMBER"
+            label="ROLL NUMBER / FACULTY ID / EMAIL"
             type="text"
             value={rollNumber}
             onChange={(e) => setRollNumber(e.target.value)}
-            placeholder="Enter roll number"
+            placeholder="Enter roll number, faculty ID, or email"
             variant="dark"
             required
             autoFocus
