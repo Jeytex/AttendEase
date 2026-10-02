@@ -104,6 +104,8 @@ export function Sidebar({ className = '' }) {
                     return (
                       <button
                         key={item.path}
+                        type="button"
+                        aria-current={isActive ? 'page' : undefined}
                         onClick={() => navigate(item.path)}
                         className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 flex items-center gap-2.5 cursor-pointer ${
                           isActive
@@ -136,6 +138,8 @@ export function Sidebar({ className = '' }) {
                     return (
                       <button
                         key={item.path}
+                        type="button"
+                        aria-current={isActive ? 'page' : undefined}
                         onClick={() => navigate(item.path)}
                         className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 flex items-center gap-2.5 cursor-pointer ${
                           isActive
