@@ -130,6 +130,6 @@ To run the automated backend test suite:
 
 ```bash
 cd backend
-python -c "import test_app; unittest.main(module='test_app')"
+python test_suite.py
 ```
-*All 15 end-to-end scenarios test authentication, session creation, duplicate prevention, QR rotation, QR expiration, attendance recording, and multi-session isolation.*
+*All 22 production scenarios test authentication, biometric face enrollment, quality/liveness enforcement, dynamic QR rotation, QR expiration, duplicate/concurrent attendance prevention, and faculty manual overrides.*
