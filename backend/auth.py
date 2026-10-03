@@ -6,7 +6,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from database import db
-from models import User, Student, FacultyProfile, FaceProfile, now_utc
+from models import User, Student, FacultyProfile, now_utc
 
 auth = Blueprint("auth", __name__)
 
