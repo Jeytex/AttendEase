@@ -123,8 +123,13 @@ export function RegisterFacePage() {
     const video = videoRef.current;
     const canvas = canvasRef.current;
 
-    const width = video.videoWidth || 640;
-    const height = video.videoHeight || 480;
+    if (!video.videoWidth || !video.videoHeight) {
+      setErrorMessage('Camera stream is still initializing. Please wait a moment and try again.');
+      return;
+    }
+
+    const width = video.videoWidth;
+    const height = video.videoHeight;
 
     canvas.width = width;
     canvas.height = height;
