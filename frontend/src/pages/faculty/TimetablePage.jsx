@@ -2,10 +2,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAttendance } from '../../context/AttendanceContext';
 import { Button } from '../../components/ui/Button';
 
+const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const getInitialWeekday = () => {
+  const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
+  return WEEKDAYS.includes(dayName) ? dayName : 'Monday';
+};
+
 export function TimetablePage() {
   const { timetable, fetchTimetable, subjects, fetchSubjects, createTimetableSlot, updateTimetableSlot, deleteTimetableSlot } = useAttendance();
   const [loading, setLoading] = useState(true);
-  const [selectedDay, setSelectedDay] = useState('Monday');
+  const [selectedDay, setSelectedDay] = useState(getInitialWeekday);
   const [error, setError] = useState('');
 
   // Add Modal State
@@ -53,7 +59,7 @@ export function TimetablePage() {
     setTimeout(() => setToastMessage(''), 4000);
   };
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const daysOfWeek = WEEKDAYS;
   const daySlots = timetable.filter((slot) => slot.day_of_week === selectedDay);
 
   const handleAddSubmit = async (e) => {
