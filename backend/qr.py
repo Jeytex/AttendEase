@@ -1,20 +1,16 @@
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 import secrets
 
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
 
 from database import db
-from models import ClassSession
+from models import ClassSession, now_utc
 
 
 qr = Blueprint("qr", __name__)
 
 QR_DEFAULT_LIFETIME_SECONDS = 5
-
-
-def now_utc():
-    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 @qr.route("/sessions/<int:session_id>/qr", methods=["GET"])
