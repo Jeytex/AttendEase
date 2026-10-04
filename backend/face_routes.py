@@ -14,6 +14,7 @@ face_bp = Blueprint("face", __name__)
 @face_bp.route("/register", methods=["POST"])
 @jwt_required()
 def register_face():
+    """Enroll a student's 512-d face embedding after passing quality and liveness checks."""
     claims = get_jwt()
     if claims.get("role") != "student":
         return jsonify({"error": "Only student accounts can register a face profile"}), 403
@@ -103,6 +104,7 @@ def register_face():
 @face_bp.route("/status", methods=["GET"])
 @jwt_required()
 def face_status():
+    """Return the biometric enrollment status for the currently authenticated student."""
     claims = get_jwt()
     if claims.get("role") != "student":
         return jsonify({"error": "Only student accounts have a face registration status"}), 403
