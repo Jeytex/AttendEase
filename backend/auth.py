@@ -223,6 +223,7 @@ def get_current_user():
 
     roll_number = None
     faculty_id_code = None
+    department = None
     status = "active"
     requires_face_registration = False
     face_registered = False
@@ -237,6 +238,7 @@ def get_current_user():
     elif user.role == "faculty":
         fac = FacultyProfile.query.filter_by(user_id=user.id).first()
         faculty_id_code = fac.faculty_id_code if fac else None
+        department = fac.department if fac else None
 
     return jsonify({
         "user_id": user.id,
@@ -248,4 +250,5 @@ def get_current_user():
         "requires_face_registration": requires_face_registration,
         "roll_number": roll_number,
         "faculty_id": faculty_id_code,
+        "department": department,
     }), 200
