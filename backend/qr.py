@@ -16,6 +16,7 @@ QR_DEFAULT_LIFETIME_SECONDS = 5
 @qr.route("/sessions/<int:session_id>/qr", methods=["GET"])
 @jwt_required()
 def get_current_qr(session_id):
+    """Return the active QR token for a session, rotating server-side when expired."""
     session = db.session.get(ClassSession, session_id)
 
     if not session:
