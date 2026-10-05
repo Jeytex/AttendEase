@@ -92,6 +92,9 @@ class ClassSession(db.Model):
     subject = db.relationship("Subject")
     faculty = db.relationship("User")
 
+    def __repr__(self):
+        return f"<ClassSession id={self.id} active={self.active}>"
+
 
 class Attendance(db.Model):
     __table_args__ = (
