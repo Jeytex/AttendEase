@@ -50,6 +50,9 @@ class FacultyProfile(db.Model):
 
     user = db.relationship("User", backref=db.backref("faculty_profile", uselist=False))
 
+    def __repr__(self):
+        return f"<FacultyProfile {self.faculty_id_code}>"
+
 
 class FaceProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
