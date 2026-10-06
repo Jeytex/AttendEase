@@ -26,7 +26,7 @@ def register_face():
 
     image_data = None
     if request.is_json:
-        data = request.get_json() or {}
+        data = request.get_json(silent=True) or {}
         image_data = data.get("image") or data.get("image_base64")
     elif "file" in request.files:
         image_data = request.files["file"].read()
