@@ -8,6 +8,8 @@ export function Navbar({ onMobileMenuToggle }) {
     switch (route) {
       case '/student':
         return 'Student Dashboard';
+      case '/student/register-face':
+        return 'Biometric Face Registration';
       case '/student/scan':
         return 'Mark Attendance';
       case '/student/verify':
