@@ -158,6 +158,12 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
         })
         self.assertEqual(login_res.status_code, 200)
         alice_token = login_res.get_json()["access_token"]
+        me_res = self.client.get(
+            "/api/auth/me",
+            headers={"Authorization": f"Bearer {alice_token}"}
+        )
+        self.assertEqual(me_res.status_code, 200)
+        self.assertEqual(me_res.get_json()["roll_number"], alice_roll)
         print("SCENARIO 4 PASSED: Student login returns status 'active'.")
 
         # ----------------------------------------------------
