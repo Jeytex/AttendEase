@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button } from '../ui/Button';
 
-export function AttendanceSuccess({ subject = 'Data Structures', onBackToDashboard }) {
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+export function AttendanceSuccess({ subject = 'Data Structures', timestamp, onBackToDashboard }) {
+  const displayDate = timestamp ? new Date(timestamp) : new Date();
+  const timeStr = displayDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
     <div className="max-w-md mx-auto text-center py-8">
