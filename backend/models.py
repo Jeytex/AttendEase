@@ -40,6 +40,9 @@ class Student(db.Model):
         cascade="all, delete-orphan",
     )
 
+    def __repr__(self):
+        return f"<Student {self.roll_number}>"
+
 
 class FacultyProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
