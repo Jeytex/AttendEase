@@ -25,6 +25,16 @@ faculty_bp = Blueprint("faculty", __name__)
 
 ALLOWED_QR_LIFETIMES = (3, 5, 10, 15)
 
+DAYS_ORDER = {
+    "Monday": 1,
+    "Tuesday": 2,
+    "Wednesday": 3,
+    "Thursday": 4,
+    "Friday": 5,
+    "Saturday": 6,
+    "Sunday": 7,
+}
+
 
 def faculty_only():
     claims = get_jwt()
@@ -92,19 +102,9 @@ def get_subjects():
 def get_timetable():
     slots = TimetableSlot.query.all()
 
-    days_order = {
-        "Monday": 1,
-        "Tuesday": 2,
-        "Wednesday": 3,
-        "Thursday": 4,
-        "Friday": 5,
-        "Saturday": 6,
-        "Sunday": 7,
-    }
-
     sorted_slots = sorted(
         slots,
-        key=lambda s: (days_order.get(s.day_of_week, 99), s.start_time)
+        key=lambda s: (DAYS_ORDER.get(s.day_of_week, 99), s.start_time)
     )
 
     return jsonify({
