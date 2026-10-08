@@ -61,6 +61,14 @@ export const cameraManager = {
   },
 
   /**
+   * Return the number of currently tracked active MediaStreams
+   * @returns {number}
+   */
+  getActiveCount() {
+    return activeStreams.size;
+  },
+
+  /**
    * Stop ALL active camera streams across the entire application
    * Also searches the DOM for any HTML5 <video> elements with active srcObject
    */
