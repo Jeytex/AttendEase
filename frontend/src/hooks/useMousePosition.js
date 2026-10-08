@@ -16,7 +16,7 @@ export function useMousePosition() {
       document.body.style.setProperty('--mouse-y', `${event.clientY}px`);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
