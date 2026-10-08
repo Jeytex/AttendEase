@@ -107,20 +107,30 @@ To scan QR codes from a mobile device on the same Wi-Fi network:
 ### Authentication
 - `POST /api/auth/login` — Authenticate user and receive JWT access token.
 - `POST /api/auth/register` — Register a new student or faculty account.
+- `GET /api/auth/me` — Fetch the currently authenticated user's profile and status.
 
-### Attendance Management (Faculty)
+### Student Biometrics (Zepiris)
+- `POST /api/student/face/register` — Enroll a student's 512-d face embedding after quality/liveness checks.
+- `GET /api/student/face/status` — Check biometric face registration status for the current student.
+
+### Attendance & Administration (Faculty)
 - `GET /api/attendance/subjects` — List all subjects.
 - `POST /api/attendance/subjects` — Create a new subject code.
-- `POST /api/attendance/sessions` — Start an active attendance session.
+- `POST /api/attendance/sessions` — Start an active attendance session with configurable QR lifetime.
 - `DELETE /api/attendance/sessions/<id>` — End an active attendance session.
 - `GET /api/attendance/sessions/<id>/records` — Retrieve live/final attendance records.
+- `POST /api/attendance/sessions/<id>/manual-mark` — Manually mark a student present with an audit reason.
+- `GET /api/attendance/admin/stats` — Retrieve system-wide administration statistics.
+- `GET /api/attendance/admin/students` — Search and manage enrolled students.
+- `GET /api/attendance/admin/faculty` — Search and manage faculty accounts.
 
 ### Dynamic QR System
 - `GET /api/qr/sessions/<id>/qr` — Generate or fetch the current rotating QR token (configurable 3s, 5s, 10s, 15s, or 30s lifetime; defaults to 5s).
 
 ### Student Attendance
-- `POST /api/attendance/mark` — Validate QR token and record student attendance.
+- `POST /api/attendance/mark` — Validate QR token, verify live face biometrics, and record student attendance.
 - `GET /api/attendance/history` — Get student's personal attendance history.
+- `GET /api/attendance/student/dashboard` — Fetch student dashboard summary, active sessions, and timetable.
 
 ---
 
