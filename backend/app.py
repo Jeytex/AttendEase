@@ -46,6 +46,7 @@ def create_app():
         db.create_all()
 
         # Database column migration helper for existing SQLite databases
+        conn = None
         try:
             conn = sqlite3.connect(DATABASE_PATH.as_posix())
             cursor = conn.cursor()
@@ -92,9 +93,11 @@ def create_app():
             cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS ix_uq_attendance_student_session ON attendance (student_id, class_session_id);")
 
             conn.commit()
-            conn.close()
         except Exception as e:
             print("[Migration note]:", e)
+        finally:
+            if conn is not None:
+                conn.close()
 
         # Seed required subjects if empty
         REQUIRED_SUBJECTS = [
