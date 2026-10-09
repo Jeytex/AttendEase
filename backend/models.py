@@ -5,6 +5,7 @@ from database import db
 
 
 def now_utc():
+    """Return current UTC timestamp as a timezone-naive datetime for SQLite storage."""
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
