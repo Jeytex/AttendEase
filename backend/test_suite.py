@@ -516,6 +516,7 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
             db.session.add(ended_sess)
             db.session.commit()
             ended_sess_id = ended_sess.id
+            self.created_session_ids.append(ended_sess_id)
 
         with patch.object(zepiris_service, "assess_quality", return_value=passed_quality):
             with patch.object(zepiris_service, "extract_face_embedding", return_value=(np.array(self.student_charlie_emb, dtype=np.float32), {"face_detected": True, "embedding_dim": 512})):
