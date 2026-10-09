@@ -57,6 +57,19 @@ export function StudentsPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isCreateOpen && !editingStudent && !viewingStudent) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsCreateOpen(false);
+        setEditingStudent(null);
+        setViewingStudent(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isCreateOpen, editingStudent, viewingStudent]);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);

@@ -44,6 +44,18 @@ export function SubjectsPage() {
     };
   }, [loadData]);
 
+  useEffect(() => {
+    if (!isCreateOpen && !editingSubject) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsCreateOpen(false);
+        setEditingSubject(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isCreateOpen, editingSubject]);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);

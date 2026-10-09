@@ -58,6 +58,18 @@ export function FacultyPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isCreateOpen && !editingFaculty) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsCreateOpen(false);
+        setEditingFaculty(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isCreateOpen, editingFaculty]);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
