@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAttendance } from '../../context/AttendanceContext';
 import { Button } from '../../components/ui/Button';
 
@@ -30,6 +30,7 @@ export function FacultyPage() {
   const [editError, setEditError] = useState('');
 
   const [toastMessage, setToastMessage] = useState('');
+  const toastTimerRef = useRef(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -51,9 +52,16 @@ export function FacultyPage() {
     return () => clearTimeout(timer);
   }, [loadData]);
 
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
   const showToast = (msg) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 4000);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToastMessage(''), 4000);
   };
 
   const handleCreateSubmit = async (e) => {
