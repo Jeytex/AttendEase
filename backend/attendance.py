@@ -517,9 +517,10 @@ def mark_attendance():
     ):
         return jsonify({"error": "QR code has expired. Please scan the current QR code."}), 400
 
-    # 4. Compare submitted token with current active session token
-    if str(token).strip() != str(session.qr_token).strip():
+    # 4. Compare submitted token with current active session token using constant-time digest check
+    if not secrets.compare_digest(str(token).strip(), str(session.qr_token).strip()):
         return jsonify({"error": "Invalid QR token for this session"}), 400
+
 
     # 5. Prevent duplicate attendance for the same session
     existing_attendance = Attendance.query.filter_by(
