@@ -7,7 +7,6 @@ Session Invalidation, and Faculty Manual Overrides.
 import base64
 import io
 import json
-import secrets
 import time
 import unittest
 from datetime import datetime, timedelta, timezone
