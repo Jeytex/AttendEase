@@ -125,6 +125,9 @@ class Attendance(db.Model):
     class_session = db.relationship("ClassSession")
     verifier = db.relationship("User", foreign_keys=[verified_by_faculty_id])
 
+    def __repr__(self):
+        return f"<Attendance student={self.student_id} session={self.class_session_id}>"
+
 
 class TimetableSlot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
