@@ -1421,8 +1421,11 @@ def get_student_dashboard():
             "started_at": s.created_at.strftime("%I:%M %p") if s.created_at else "—"
         })
 
-    # Real timetable schedule from DB
-    slots = TimetableSlot.query.all()
+    # Real timetable schedule from DB sorted by day and start time
+    slots = sorted(
+        TimetableSlot.query.all(),
+        key=lambda s: (DAYS_ORDER.get(s.day_of_week, 99), s.start_time)
+    )
     timetable_data = []
     for slot in slots:
         timetable_data.append({
