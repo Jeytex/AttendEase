@@ -2,11 +2,17 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useAttendance } from '../../context/AttendanceContext';
 import { Button } from '../../components/ui/Button';
 
+const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const getInitialWeekday = () => {
+  const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
+  return WEEKDAYS.includes(dayName) ? dayName : 'Monday';
+};
+
 export function StudentDashboard() {
   const { user, fetchStudentDashboard, navigate } = useAttendance();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedDay, setSelectedDay] = useState('Monday');
+  const [selectedDay, setSelectedDay] = useState(getInitialWeekday);
 
   const loadData = useCallback(async () => {
     setLoading(true);
