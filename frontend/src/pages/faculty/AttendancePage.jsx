@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAttendance } from '../../context/AttendanceContext';
 import { Button } from '../../components/ui/Button';
 
@@ -21,6 +21,7 @@ export function AttendancePage() {
   const [manualLoading, setManualLoading] = useState(false);
   const [manualError, setManualError] = useState('');
   const [toastMessage, setToastMessage] = useState('');
+  const toastTimerRef = useRef(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -41,6 +42,9 @@ export function AttendancePage() {
 
   useEffect(() => {
     fetchSubjects();
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
   }, [fetchSubjects]);
 
   useEffect(() => {
@@ -52,7 +56,8 @@ export function AttendancePage() {
 
   const showToast = (msg) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 4000);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToastMessage(''), 4000);
   };
 
   const handleManualSubmit = async (e) => {
