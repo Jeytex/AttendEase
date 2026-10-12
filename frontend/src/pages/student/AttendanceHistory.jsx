@@ -105,6 +105,7 @@ export function AttendanceHistory() {
                   <th className="pb-3 pr-4">Date</th>
                   <th className="pb-3 pr-4">Subject</th>
                   <th className="pb-3 pr-4">Code</th>
+                  <th className="pb-3 pr-4">Method</th>
                   <th className="pb-3 pr-4">Status</th>
                   <th className="pb-3 text-right">Timestamp</th>
                 </tr>
@@ -115,6 +116,9 @@ export function AttendanceHistory() {
                     <td className="py-3 pr-4 font-mono text-neutral-500">{row.date}</td>
                     <td className="py-3 pr-4 font-bold text-black">{row.subject}</td>
                     <td className="py-3 pr-4 font-mono text-neutral-500">{row.subject_code}</td>
+                    <td className="py-3 pr-4 font-mono text-[11px] text-neutral-600">
+                      {row.method === 'MANUAL' ? '👤 Manual' : '✓ QR + Face'}
+                    </td>
                     <td className="py-3 pr-4">
                       <span className="inline-block px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold">
                         ✓ Present
