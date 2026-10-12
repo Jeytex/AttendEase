@@ -38,8 +38,8 @@ export function Register() {
 
     try {
       const payload = {
-        name,
-        email,
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
         password,
         confirm_password: confirmPassword,
         role: selectedRole,
