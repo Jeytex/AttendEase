@@ -53,7 +53,7 @@ def create_subject():
 
     data = request.get_json() or {}
     name = data.get("name", "").strip()
-    code = data.get("code", "").strip()
+    code = data.get("code", "").strip().upper()
 
     if not name or not code:
         return jsonify({"error": "Subject name and code are required"}), 400
