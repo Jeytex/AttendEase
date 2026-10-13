@@ -1,6 +1,6 @@
 const getDefaultApiUrl = () => {
   if (import.meta.env.VITE_API_URL !== undefined) {
-    return import.meta.env.VITE_API_URL;
+    return String(import.meta.env.VITE_API_URL).replace(/\/+$/, "");
   }
   return "";
 };
