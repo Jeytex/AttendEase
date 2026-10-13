@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 
 export function Login() {
-  const { login } = useAttendance();
+  const { login, navigate } = useAttendance();
   const [rollNumber, setRollNumber] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -87,6 +87,20 @@ export function Login() {
             </Button>
           </div>
         </form>
+
+        {/* Switch to Register */}
+        <div className="mt-6 pt-5 border-t border-white/10 text-center">
+          <p className="text-xs text-neutral-400 font-medium">
+            New to AttendEase?{' '}
+            <button
+              type="button"
+              onClick={() => navigate('/register')}
+              className="text-white font-bold hover:underline cursor-pointer ml-1"
+            >
+              Create Account
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
