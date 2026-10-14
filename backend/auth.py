@@ -11,6 +11,18 @@ from models import User, Student, FacultyProfile, now_utc
 auth = Blueprint("auth", __name__)
 
 
+def _issue_user_token(user: User) -> str:
+    """Issue a signed JWT access token with role, name, and email claims."""
+    return create_access_token(
+        identity=str(user.id),
+        additional_claims={
+            "role": user.role,
+            "name": user.name,
+            "email": user.email,
+        }
+    )
+
+
 @auth.route("/register", methods=["POST"])
 def register():
     data = request.get_json() or {}
@@ -109,14 +121,7 @@ def register():
     db.session.commit()
 
     # Issue JWT access token
-    access_token = create_access_token(
-        identity=str(user.id),
-        additional_claims={
-            "role": user.role,
-            "name": user.name,
-            "email": user.email,
-        }
-    )
+    access_token = _issue_user_token(user)
 
     return jsonify({
         "message": "Account created successfully",
@@ -167,14 +172,7 @@ def login():
     if not user or not check_password_hash(user.password, password):
         return jsonify({"error": "Invalid credentials. Please check your roll number/email and password."}), 401
 
-    access_token = create_access_token(
-        identity=str(user.id),
-        additional_claims={
-            "role": user.role,
-            "name": user.name,
-            "email": user.email,
-        }
-    )
+    access_token = _issue_user_token(user)
 
     roll_number = None
     faculty_id_code = None
