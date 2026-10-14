@@ -78,8 +78,10 @@ export function QRScanner({ onScanSuccess, isSubmitting = false, externalError =
               await stopScanner();
 
               setTimeout(() => {
+                if (!isMounted) return;
                 setScanState('verified');
                 setTimeout(() => {
+                  if (!isMounted) return;
                   if (onScanSuccess) {
                     onScanSuccess(parsed);
                   }
