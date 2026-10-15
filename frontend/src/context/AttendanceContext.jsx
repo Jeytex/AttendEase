@@ -204,11 +204,17 @@ export function AttendanceProvider({ children }) {
     cameraManager.stopAll();
 
     setUser(null);
+    setSubjects([]);
     setActiveSession(null);
     setEndedSession(null);
     setScannedQR(null);
     setLiveStudents([]);
     setStudentHistory([]);
+    setStudentStats({
+      overallAttendance: 100,
+      classesAttended: 0,
+      classesMissed: 0,
+    });
     setFacultyHistory([]);
     navigate('/login');
   };
