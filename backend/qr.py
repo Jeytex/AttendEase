@@ -2,7 +2,7 @@ from datetime import timedelta
 import secrets
 
 from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt
 
 from database import db
 from models import ClassSession, now_utc
@@ -17,6 +17,10 @@ QR_DEFAULT_LIFETIME_SECONDS = 5
 @jwt_required()
 def get_current_qr(session_id):
     """Return the active QR token for a session, rotating server-side when expired."""
+    claims = get_jwt()
+    if claims.get("role") != "faculty":
+        return jsonify({"error": "Faculty access required"}), 403
+
     session = db.session.get(ClassSession, session_id)
 
     if not session:
