@@ -36,6 +36,9 @@ def register():
     if not name or not email or not password or not role:
         return jsonify({"error": "Name, email, password, and role are required"}), 400
 
+    if "@" not in email or "." not in email.split("@")[-1]:
+        return jsonify({"error": "Please provide a valid email address"}), 400
+
     if role not in ["student", "faculty"]:
         return jsonify({"error": "Role must be 'student' or 'faculty'"}), 400
 
