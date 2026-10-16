@@ -137,3 +137,6 @@ class TimetableSlot(db.Model):
     subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)
 
     subject = db.relationship("Subject")
+
+    def __repr__(self):
+        return f"<TimetableSlot {self.day_of_week} {self.start_time}-{self.end_time}>"
