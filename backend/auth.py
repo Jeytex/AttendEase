@@ -25,7 +25,7 @@ def _issue_user_token(user: User) -> str:
 
 @auth.route("/register", methods=["POST"])
 def register():
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
 
     name = data.get("name", "").strip()
     email = data.get("email", "").strip().lower()
@@ -142,7 +142,7 @@ def register():
 
 @auth.route("/login", methods=["POST"])
 def login():
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
 
     identifier = (
         data.get("identifier")
