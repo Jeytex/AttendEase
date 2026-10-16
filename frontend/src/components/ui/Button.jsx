@@ -3,6 +3,7 @@ import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 
 export function Button({
   children,
+  type = 'button',
   variant = 'primary', // 'primary' | 'white' | 'dark-glass' | 'secondary' | 'danger'
   size = 'md', // 'sm' | 'md' | 'lg'
   className = '',
@@ -43,6 +44,7 @@ export function Button({
   return (
     <button
       ref={buttonRef}
+      type={type}
       style={magneticStyle}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
