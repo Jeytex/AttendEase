@@ -272,7 +272,7 @@ def manual_mark_attendance(session_id):
         except (ValueError, TypeError):
             pass
     elif roll_number:
-        student = Student.query.filter_by(roll_number=str(roll_number).strip()).first()
+        student = Student.query.filter(Student.roll_number.ilike(str(roll_number).strip())).first()
 
     if not student:
         return jsonify({"error": "Student not found"}), 404
