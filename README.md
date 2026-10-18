@@ -71,15 +71,6 @@ npm run dev -- --host
 ```
 *The frontend development server will start on `https://0.0.0.0:5173`.*
 
-### 4. Optional: Desktop Control Panel
-
-On Windows, you can double-click `run_control_panel.bat` or run:
-
-```bash
-python control_panel.py
-```
-This launches a GUI dashboard that allows you to start backend/frontend servers, open browser links, and manage sessions with one click.
-
 ---
 
 ## 📱 Local Network & Phone Access
