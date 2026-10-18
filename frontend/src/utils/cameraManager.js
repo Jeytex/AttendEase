@@ -111,5 +111,6 @@ export const cameraManager = {
 // Global event listeners to guarantee camera turns off on page leave or browser back/forward
 if (typeof window !== 'undefined') {
   window.addEventListener('beforeunload', () => cameraManager.stopAll());
+  window.addEventListener('pagehide', () => cameraManager.stopAll());
   window.addEventListener('popstate', () => cameraManager.stopAll());
 }
