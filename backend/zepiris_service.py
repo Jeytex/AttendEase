@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import base64
 import io
+import logging
 import os
 import sys
 from pathlib import Path
@@ -19,6 +20,8 @@ from typing import Optional, Tuple, Dict, Any
 
 import numpy as np
 from PIL import Image
+
+logger = logging.getLogger(__name__)
 
 # Ensure zepiris package can be imported from zepiris-main directory
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,7 +54,7 @@ class ZepirisService:
         self.device = os.getenv("ZEPIRIS_DEVICE", "cpu")
         self.similarity_threshold = float(os.getenv("ZEPIRIS_SIMILARITY_THRESHOLD", "0.50"))  # InsightFace cosine similarity threshold
 
-        print("[ZepirisService] Initializing Zepiris ML models...")
+        logger.info("[ZepirisService] Initializing Zepiris ML models...")
 
         # 1. Face Embedding Service (buffalo_l: det_10g + w600k_r50)
         self.face_service = FaceEmbeddingService(
@@ -72,7 +75,7 @@ class ZepirisService:
         try:
             self.blur_service.load_model()
         except Exception as e:
-            print(f"[ZepirisService] Warning: Blur service load note: {e}")
+            logger.warning("[ZepirisService] Warning: Blur service load note: %s", e)
 
         # 3. Anti-Spoofing / Liveness Service
         spoof_model_path = str(self.models_dir / "spoof_model.pth")
@@ -85,7 +88,7 @@ class ZepirisService:
         try:
             self.spoof_service.load_model()
         except Exception as e:
-            print(f"[ZepirisService] Warning: Spoof service load note: {e}")
+            logger.warning("[ZepirisService] Warning: Spoof service load note: %s", e)
 
         # 4. NSFW Detection Service
         nsfw_model_path = str(self.models_dir / "nsfw_model.pth")
@@ -98,10 +101,10 @@ class ZepirisService:
         try:
             self.nsfw_service.load_model()
         except Exception as e:
-            print(f"[ZepirisService] Warning: NSFW service load note: {e}")
+            logger.warning("[ZepirisService] Warning: NSFW service load note: %s", e)
 
         self._initialized = True
-        print("[ZepirisService] All Zepiris ML services loaded successfully.")
+        logger.info("[ZepirisService] All Zepiris ML services loaded successfully.")
 
     @staticmethod
     def decode_image(image_input: str | bytes) -> np.ndarray:
@@ -152,7 +155,7 @@ class ZepirisService:
             if not blur_res.is_sharp:
                 results["passed"] = False
         except Exception as e:
-            print(f"[ZepirisService] Blur check error: {e}")
+            logger.warning("[ZepirisService] Blur check error: %s", e)
             results["blur"] = {
                 "is_sharp": False,
                 "probability": 0.0,
@@ -169,7 +172,7 @@ class ZepirisService:
             if not spoof_res.is_live:
                 results["passed"] = False
         except Exception as e:
-            print(f"[ZepirisService] Spoof check error: {e}")
+            logger.warning("[ZepirisService] Spoof check error: %s", e)
             results["spoof"] = {
                 "is_live": False,
                 "probability": 0.0,
@@ -186,7 +189,7 @@ class ZepirisService:
             if not nsfw_res.is_safe:
                 results["passed"] = False
         except Exception as e:
-            print(f"[ZepirisService] NSFW check error: {e}")
+            logger.warning("[ZepirisService] NSFW check error: %s", e)
             results["nsfw"] = {
                 "is_safe": False,
                 "probability": 0.0,
