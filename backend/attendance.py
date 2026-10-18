@@ -13,7 +13,6 @@ from models import (
     Attendance,
     Student,
     TimetableSlot,
-    FaceProfile,
     now_utc,
 )
 from sqlalchemy.exc import IntegrityError
