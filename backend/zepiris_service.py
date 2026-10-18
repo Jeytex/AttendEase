@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import base64
 import io
+import os
 import sys
 from pathlib import Path
 from typing import Optional, Tuple, Dict, Any
@@ -48,7 +49,7 @@ class ZepirisService:
 
         self.models_dir = ZEPIRIS_ROOT / "models"
         self.device = "cpu"
-        self.similarity_threshold = 0.50  # InsightFace cosine similarity threshold
+        self.similarity_threshold = float(os.getenv("ZEPIRIS_SIMILARITY_THRESHOLD", "0.50"))  # InsightFace cosine similarity threshold
 
         print("[ZepirisService] Initializing Zepiris ML models...")
 
