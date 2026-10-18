@@ -48,7 +48,7 @@ class ZepirisService:
             return
 
         self.models_dir = ZEPIRIS_ROOT / "models"
-        self.device = "cpu"
+        self.device = os.getenv("ZEPIRIS_DEVICE", "cpu")
         self.similarity_threshold = float(os.getenv("ZEPIRIS_SIMILARITY_THRESHOLD", "0.50"))  # InsightFace cosine similarity threshold
 
         print("[ZepirisService] Initializing Zepiris ML models...")
