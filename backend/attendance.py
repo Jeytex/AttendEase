@@ -1185,6 +1185,11 @@ def get_all_attendance_records():
     session_id = request.args.get("session_id")
     method = request.args.get("method")
     search = request.args.get("search", "").strip().lower()
+    raw_limit = request.args.get("limit", "150")
+    try:
+        limit_val = max(1, min(int(raw_limit), 500))
+    except (ValueError, TypeError):
+        limit_val = 150
 
     query = Attendance.query.join(Student).join(User)
 
@@ -1209,7 +1214,7 @@ def get_all_attendance_records():
             (User.name.ilike(f"%{search}%"))
         )
 
-    records = query.order_by(Attendance.timestamp.desc()).limit(150).all()
+    records = query.order_by(Attendance.timestamp.desc()).limit(limit_val).all()
     results = []
 
     for r in records:
