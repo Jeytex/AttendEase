@@ -50,7 +50,7 @@ def create_subject():
     if not faculty_only():
         return jsonify({"error": "Faculty access required"}), 403
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
     code = data.get("code", "").strip().upper()
 
@@ -133,7 +133,7 @@ def create_session():
     if not faculty_only():
         return jsonify({"error": "Faculty access required"}), 403
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     subject_id = data.get("subject_id")
 
     if not subject_id:
@@ -259,7 +259,7 @@ def manual_mark_attendance(session_id):
     if not session.active:
         return jsonify({"error": "Cannot manually mark attendance for an ended session"}), 400
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     student_id = data.get("student_id")
     roll_number = data.get("roll_number")
     reason = str(data.get("reason", "")).strip() or "Faculty manual override"
@@ -778,7 +778,7 @@ def create_admin_student():
     if not faculty_only():
         return jsonify({"error": "Faculty access required"}), 403
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
     email = data.get("email", "").strip().lower()
     roll_number = data.get("roll_number", "").strip().upper()
@@ -844,7 +844,7 @@ def update_admin_student(student_id):
     if not student:
         return jsonify({"error": "Student not found"}), 404
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
     email = data.get("email", "").strip().lower()
     roll_number = data.get("roll_number", "").strip().upper()
@@ -977,7 +977,7 @@ def create_admin_faculty():
     if not faculty_only():
         return jsonify({"error": "Faculty access required"}), 403
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
@@ -1044,7 +1044,7 @@ def update_admin_faculty(faculty_id):
     if not prof:
         return jsonify({"error": "Faculty member not found"}), 404
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
     email = data.get("email", "").strip().lower()
     faculty_id_code = data.get("faculty_id_code", "").strip().upper()
@@ -1123,7 +1123,7 @@ def update_subject(subject_id):
     if not subject:
         return jsonify({"error": "Subject not found"}), 404
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
     code = data.get("code", "").strip().upper()
 
@@ -1243,7 +1243,7 @@ def create_timetable_slot():
     if not faculty_only():
         return jsonify({"error": "Faculty access required"}), 403
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     day = data.get("day_of_week", "").strip()
     start_time = data.get("start_time", "").strip()
     end_time = data.get("end_time", "").strip()
@@ -1294,7 +1294,7 @@ def update_timetable_slot(slot_id):
     if not slot:
         return jsonify({"error": "Timetable slot not found"}), 404
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     day = data.get("day_of_week", "").strip()
     start_time = data.get("start_time", "").strip()
     end_time = data.get("end_time", "").strip()
