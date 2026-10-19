@@ -262,7 +262,7 @@ def manual_mark_attendance(session_id):
     data = request.get_json(silent=True) or {}
     student_id = data.get("student_id")
     roll_number = data.get("roll_number")
-    reason = str(data.get("reason", "")).strip() or "Faculty manual override"
+    reason = (str(data.get("reason", "")).strip() or "Faculty manual override")[:255]
 
     student = None
     if student_id:
