@@ -230,6 +230,8 @@ class ZepirisService:
     @staticmethod
     def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
         """Compute cosine similarity between two normalized embedding vectors."""
+        if a.shape != b.shape:
+            raise ValueError("Embedding vectors must have matching dimensions")
         dot = float(np.dot(a, b))
         norm_a = float(np.linalg.norm(a))
         norm_b = float(np.linalg.norm(b))
