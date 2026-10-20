@@ -1100,6 +1100,10 @@ def delete_admin_faculty(faculty_id):
     if prof.user_id == current_user_id:
         return jsonify({"error": "Cannot delete your own active administrator account"}), 400
 
+    linked_session = ClassSession.query.filter_by(faculty_id=prof.user_id).first()
+    if linked_session:
+        return jsonify({"error": "Cannot delete a faculty account with recorded attendance sessions"}), 400
+
     user = prof.user
     db.session.delete(prof)
     if user:
