@@ -1159,9 +1159,11 @@ def delete_subject(subject_id):
     if not subject:
         return jsonify({"error": "Subject not found"}), 404
 
-    active_sess = ClassSession.query.filter_by(subject_id=subject.id, active=True).first()
-    if active_sess:
-        return jsonify({"error": "Cannot delete a subject with an active attendance session"}), 400
+    existing_sess = ClassSession.query.filter_by(subject_id=subject.id).first()
+    if existing_sess:
+        if existing_sess.active:
+            return jsonify({"error": "Cannot delete a subject with an active attendance session"}), 400
+        return jsonify({"error": "Cannot delete a subject with existing attendance session history"}), 400
 
     # Delete timetable slots associated with this subject
     TimetableSlot.query.filter_by(subject_id=subject.id).delete()
