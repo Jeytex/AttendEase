@@ -235,7 +235,7 @@ class ZepirisService:
         norm_b = float(np.linalg.norm(b))
         if norm_a == 0.0 or norm_b == 0.0:
             return 0.0
-        return dot / (norm_a * norm_b)
+        return float(np.clip(dot / (norm_a * norm_b), -1.0, 1.0))
 
     def verify_face_match(
         self,
