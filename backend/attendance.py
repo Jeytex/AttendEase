@@ -1257,6 +1257,9 @@ def create_timetable_slot():
     if not day or not start_time or not end_time or not subject_id:
         return jsonify({"error": "Day, start time, end time, and subject are required"}), 400
 
+    if day not in DAYS_ORDER:
+        return jsonify({"error": "Invalid day_of_week. Must be Monday through Sunday."}), 400
+
     try:
         subject_id = int(subject_id)
     except (ValueError, TypeError):
