@@ -370,7 +370,7 @@ def get_session_records(session_id):
                 "student_id": record.student.id,
                 "name": record.student.user.name,
                 "roll_number": record.student.roll_number,
-                "status": "present",
+                "status": "Present",
                 "method": record.method if getattr(record, "method", None) else "QR_FACE",
                 "reason": record.reason if getattr(record, "reason", None) else None,
                 "confidence_score": record.confidence_score if getattr(record, "confidence_score", None) else None,
