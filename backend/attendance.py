@@ -1433,6 +1433,7 @@ def get_student_dashboard():
             "subject": s.subject.name if s.subject else "Class Session",
             "subject_code": s.subject.code if s.subject else "—",
             "faculty": s.faculty.name if s.faculty else "Faculty",
+            "qr_lifetime_seconds": s.qr_lifetime_seconds if getattr(s, "qr_lifetime_seconds", None) else 5,
             "started_at": s.created_at.strftime("%I:%M %p") if s.created_at else "—"
         })
 
