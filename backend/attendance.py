@@ -244,6 +244,7 @@ def end_session(session_id):
 @attendance.route("/sessions/<int:session_id>/manual-mark", methods=["POST"])
 @jwt_required()
 def manual_mark_attendance(session_id):
+    """Manually mark a student present for an active session with faculty audit metadata."""
     if not faculty_only():
         return jsonify({"error": "Faculty access required"}), 403
 
