@@ -450,6 +450,7 @@ def get_faculty_sessions_history():
 @attendance.route("/mark", methods=["POST"])
 @jwt_required()
 def mark_attendance():
+    """Verify student JWT, active session, server-side QR expiry/token, and 1:1 Zepiris biometrics."""
     claims = get_jwt()
 
     # Only students can mark attendance
