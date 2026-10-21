@@ -1389,6 +1389,7 @@ def get_student_profile():
             "roll_number": student.roll_number,
             "status": student.status,
             "face_registered": bool(student.face_profile is not None),
+            "zepiris_identity_id": student.zepiris_identity_id,
             "created_at": student.created_at.strftime("%b %d, %Y") if student.created_at else "—",
             "total_attended": att_count
         }
