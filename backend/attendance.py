@@ -938,6 +938,7 @@ def delete_admin_student(student_id):
 # ============================================================
 
 @attendance.route("/admin/faculty", methods=["GET"])
+@faculty_bp.route("/faculty", methods=["GET"])
 @jwt_required()
 def get_admin_faculty():
     if not faculty_only():
@@ -974,6 +975,7 @@ def get_admin_faculty():
 
 
 @attendance.route("/admin/faculty", methods=["POST"])
+@faculty_bp.route("/faculty", methods=["POST"])
 @jwt_required()
 def create_admin_faculty():
     if not faculty_only():
