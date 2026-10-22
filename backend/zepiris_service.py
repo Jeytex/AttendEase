@@ -127,7 +127,8 @@ class ZepirisService:
         else:
             raise ValueError("Unsupported image input type. Expected base64 str or bytes.")
 
-        pil_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        with Image.open(io.BytesIO(image_bytes)) as img:
+            pil_image = img.convert("RGB")
         return np.array(pil_image, dtype=np.uint8)
 
     def assess_quality(self, image_rgb: np.ndarray) -> Dict[str, Any]:
