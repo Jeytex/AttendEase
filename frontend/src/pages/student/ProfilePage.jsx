@@ -22,6 +22,7 @@ export function ProfilePage() {
   const faceRegistered = profile ? profile.face_registered : (user?.status === 'active');
   const totalAttended = profile?.total_attended ?? 0;
   const createdAt = profile?.created_at || '—';
+  const zepirisIdentityId = profile?.zepiris_identity_id || user?.zepiris_identity_id || '—';
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto py-2">
@@ -86,8 +87,10 @@ export function ProfilePage() {
           </div>
 
           <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200/80">
-            <span className="text-[10px] font-bold uppercase text-neutral-400 font-mono">Role</span>
-            <p className="font-bold text-black text-sm mt-1">Student</p>
+            <span className="text-[10px] font-bold uppercase text-neutral-400 font-mono">Zepiris Identity ID</span>
+            <p className="font-mono font-semibold text-black text-xs mt-1 truncate" title={zepirisIdentityId}>
+              {zepirisIdentityId}
+            </p>
           </div>
 
           <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200/80">
