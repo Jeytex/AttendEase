@@ -1319,6 +1319,8 @@ def update_timetable_slot(slot_id):
     subject_id = data.get("subject_id")
 
     if day:
+        if day not in DAYS_ORDER:
+            return jsonify({"error": "Invalid day_of_week. Must be Monday through Sunday."}), 400
         slot.day_of_week = day
     if start_time:
         slot.start_time = start_time
