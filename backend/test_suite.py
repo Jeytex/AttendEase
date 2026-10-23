@@ -709,6 +709,14 @@ class AttendEaseProductionTestSuite(unittest.TestCase):
         print(" ALL 22 PRODUCTION SYSTEM TESTS PASSED SUCCESSFULLY! ")
         print("=======================================================\n")
 
+    def test_cosine_similarity_zero_and_identical_vectors(self):
+        """Verify cosine_similarity handles zero vectors, identical vectors, and opposite vectors."""
+        v = np.array(self.student_alice_emb, dtype=np.float32)
+        zero = np.zeros(512, dtype=np.float32)
+        self.assertAlmostEqual(zepiris_service.cosine_similarity(v, v), 1.0, places=5)
+        self.assertAlmostEqual(zepiris_service.cosine_similarity(v, -v), -1.0, places=5)
+        self.assertEqual(zepiris_service.cosine_similarity(v, zero), 0.0)
+
 
 if __name__ == "__main__":
     unittest.main()
